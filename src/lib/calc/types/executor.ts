@@ -19,4 +19,10 @@ export enum E_EXECUTOR_FUNCTION_NAMES {
   D2R = 'D2R',
   SQRT = 'sqrt',
   SQRTN = 'sqrtn',
+
+  // Set functions
+  UNION = 'union',
+  INTERSECT = 'intersect',
+  DIFFERENCE = 'difference',
+  DIFF = 'diff',
 }

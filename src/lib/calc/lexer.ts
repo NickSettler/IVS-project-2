@@ -17,6 +17,8 @@ export class Lexer {
   private static readonly LEXER_ONE_SYMBOL_MAP: Record<string, E_TOKEN_TYPE> = {
     '(': E_TOKEN_TYPE.OPEN_PAREN,
     ')': E_TOKEN_TYPE.CLOSE_PAREN,
+    '[': E_TOKEN_TYPE.SQUARE_OPEN_PAREN,
+    ']': E_TOKEN_TYPE.SQUARE_CLOSE_PAREN,
     ',': E_TOKEN_TYPE.COMMA,
   };
 
@@ -66,6 +68,8 @@ export class Lexer {
             case ',':
             case '(':
             case ')':
+            case '[':
+            case ']':
               token.type = Lexer.LEXER_ONE_SYMBOL_MAP[currentChar];
               token.value = currentChar;
               return this.prepareReturn(token);

@@ -32,9 +32,24 @@ export class Executor {
     },
   };
 
-  private static readonly FUNCTIONS_MAP: Record<
-    string,
-    (...args: Array<number>) => number
+  private static readonly SET_MAP: Partial<
+    Record<
+      E_EXECUTOR_FUNCTION_NAMES,
+      (...sets: Array<Array<number>>) => Array<number>
+    >
+  > = {
+    [E_EXECUTOR_FUNCTION_NAMES.UNION]: (set1, set2) =>
+      Array.from(new Set([...set1, ...set2])),
+    [E_EXECUTOR_FUNCTION_NAMES.INTERSECT]: (set1, set2) =>
+      set1.filter((value) => set2.includes(value)),
+    [E_EXECUTOR_FUNCTION_NAMES.DIFFERENCE]: (set1, set2) =>
+      set1.filter((value) => !set2.includes(value)),
+    [E_EXECUTOR_FUNCTION_NAMES.DIFF]: (set1, set2) =>
+      set1.filter((value) => !set2.includes(value)),
+  };
+
+  private static readonly FUNCTIONS_MAP: Partial<
+    Record<E_EXECUTOR_FUNCTION_NAMES, (...args: Array<number>) => number>
   > = {
     // Number functions
     [E_EXECUTOR_FUNCTION_NAMES.ABS]: Math.abs,
@@ -89,6 +104,42 @@ export class Executor {
     }
 
     return parseFloat(node.value);
+  }
+
+  private prepareResult(): string {
+    if (
+      this.syntaxTree.right?.type !== E_TOKEN_TYPE.NUMBER_LITERAL &&
+      this.syntaxTree.right?.type !== E_TOKEN_TYPE.SET
+    ) {
+      error(E_ERROR_CODES.EXECUTOR_ERROR, 'Invalid result');
+      return '';
+    }
+
+    if (
+      this.syntaxTree.right?.type === E_TOKEN_TYPE.NUMBER_LITERAL &&
+      this.syntaxTree.right?.value
+    ) {
+      return JSON.parse(this.syntaxTree.right.value);
+    }
+
+    if (this.syntaxTree.right?.type === E_TOKEN_TYPE.SET) {
+      const result = Array<number>();
+
+      this.syntaxTree.right.traverseTree((node) => {
+        if (node.type === E_TOKEN_TYPE.SET_ITEM) {
+          if (!node.left) {
+            error(E_ERROR_CODES.EXECUTOR_ERROR, 'Invalid set item value');
+            return;
+          }
+
+          result.push(this.parseNumberLiteral(node.left));
+        }
+      }, E_SYNTAX_TREE_TRAVERSE_ORDER.POST_ORDER);
+
+      return `[${result.join(', ')}]`;
+    }
+
+    return '';
   }
 
   public execute(): any {
@@ -152,7 +203,11 @@ export class Executor {
             ? node.left?.value
             : undefined;
 
-        if (!functionName || !Executor.FUNCTIONS_MAP[functionName]) {
+        if (
+          !functionName ||
+          (!Executor.FUNCTIONS_MAP[functionName as E_EXECUTOR_FUNCTION_NAMES] &&
+            !Executor.SET_MAP[functionName as E_EXECUTOR_FUNCTION_NAMES])
+        ) {
           error(
             E_ERROR_CODES.EXECUTOR_ERROR,
             `Invalid function name "${functionName}"`,
@@ -160,55 +215,145 @@ export class Executor {
           return;
         }
 
-        const operation = Executor.FUNCTIONS_MAP[functionName];
+        const isSetFunction =
+          !!Executor.SET_MAP[functionName as E_EXECUTOR_FUNCTION_NAMES];
+        const isNumberFunction =
+          !!Executor.FUNCTIONS_MAP[functionName as E_EXECUTOR_FUNCTION_NAMES];
 
-        if (!operation) {
-          error(
-            E_ERROR_CODES.EXECUTOR_ERROR,
-            `Invalid function "${functionName}" operation`,
-          );
-          return;
-        }
+        if (isNumberFunction) {
+          const operation =
+            Executor.FUNCTIONS_MAP[functionName as E_EXECUTOR_FUNCTION_NAMES];
 
-        const args: Array<number> = [];
-
-        node.right?.traverseTree((argNode) => {
-          if (argNode.type === E_TOKEN_TYPE.FUNCTION_ARGS) {
-            if (!argNode.left) {
-              error(
-                E_ERROR_CODES.EXECUTOR_ERROR,
-                'Function argument is missing',
-              );
-              return;
-            }
-
-            args.push(this.parseNumberLiteral(argNode.left));
+          if (!operation) {
+            error(
+              E_ERROR_CODES.EXECUTOR_ERROR,
+              `Invalid function "${functionName}" operation`,
+            );
+            return;
           }
-        }, E_SYNTAX_TREE_TRAVERSE_ORDER.POST_ORDER);
 
-        if (operation.length !== args.length) {
-          error(
-            E_ERROR_CODES.EXECUTOR_ERROR,
-            `Invalid function "${functionName}" arguments count. Expected ${operation.length}, got ${args.length}`,
-          );
-          return;
+          const args: Array<number> = [];
+
+          node.right?.traverseTree((argNode) => {
+            if (argNode.type === E_TOKEN_TYPE.FUNCTION_ARGS) {
+              if (!argNode.left) {
+                error(
+                  E_ERROR_CODES.EXECUTOR_ERROR,
+                  'Function argument is missing',
+                );
+                return;
+              }
+
+              args.push(this.parseNumberLiteral(argNode.left));
+            }
+          }, E_SYNTAX_TREE_TRAVERSE_ORDER.POST_ORDER);
+
+          if (operation.length !== args.length) {
+            error(
+              E_ERROR_CODES.EXECUTOR_ERROR,
+              `Invalid function "${functionName}" arguments count. Expected ${operation.length}, got ${args.length}`,
+            );
+            return;
+          }
+
+          const result = operation(...args);
+
+          node.value = JSON.stringify(result);
+          node.type = E_TOKEN_TYPE.NUMBER_LITERAL;
+          node.left = undefined;
+          node.right = undefined;
         }
 
-        const result = operation(...args);
+        if (isSetFunction) {
+          const operation =
+            Executor.SET_MAP[functionName as E_EXECUTOR_FUNCTION_NAMES];
 
-        node.value = JSON.stringify(result);
-        node.type = E_TOKEN_TYPE.NUMBER_LITERAL;
-        node.left = undefined;
-        node.right = undefined;
+          if (!operation) {
+            error(
+              E_ERROR_CODES.EXECUTOR_ERROR,
+              `Invalid function "${functionName}" operation`,
+            );
+            return;
+          }
+
+          const sets: Array<Array<number>> = [];
+
+          node.right?.traverseTree((argNode) => {
+            if (argNode.type === E_TOKEN_TYPE.FUNCTION_ARGS) {
+              if (!argNode.left || argNode.left.type !== E_TOKEN_TYPE.SET) {
+                error(
+                  E_ERROR_CODES.EXECUTOR_ERROR,
+                  'Wrong set argument for set function',
+                );
+                return;
+              }
+
+              const set: Array<number> = [];
+
+              argNode.left.right?.traverseTree((setItem) => {
+                if (setItem.type === E_TOKEN_TYPE.SET_ITEM) {
+                  if (!setItem.left) {
+                    error(
+                      E_ERROR_CODES.EXECUTOR_ERROR,
+                      'Invalid set item value',
+                    );
+                    return;
+                  }
+
+                  set.push(this.parseNumberLiteral(setItem.left));
+                }
+              }, E_SYNTAX_TREE_TRAVERSE_ORDER.POST_ORDER);
+
+              sets.push(set);
+            }
+          }, E_SYNTAX_TREE_TRAVERSE_ORDER.POST_ORDER);
+
+          if (operation.length !== sets.length) {
+            error(
+              E_ERROR_CODES.EXECUTOR_ERROR,
+              `Invalid function "${functionName}" arguments count. Expected ${operation.length}, got ${sets.length}`,
+            );
+            return;
+          }
+
+          const result = operation(...sets);
+
+          node.type = E_TOKEN_TYPE.SET;
+          node.value = undefined;
+          node.left = undefined;
+          node.right = new TAbstractSyntaxTree(
+            E_TOKEN_TYPE.SET_ITEM,
+            undefined,
+            new TAbstractSyntaxTree(
+              E_TOKEN_TYPE.NUMBER_LITERAL,
+              JSON.stringify(result.shift()),
+            ),
+          );
+
+          while (result.length > 0) {
+            node.right = new TAbstractSyntaxTree(
+              E_TOKEN_TYPE.SET_ITEM,
+              undefined,
+              new TAbstractSyntaxTree(
+                E_TOKEN_TYPE.NUMBER_LITERAL,
+                JSON.stringify(result.shift()),
+              ),
+              node.right,
+            );
+          }
+        }
       }
     }, E_SYNTAX_TREE_TRAVERSE_ORDER.POST_ORDER);
 
-    if (this.syntaxTree.right?.type !== E_TOKEN_TYPE.NUMBER_LITERAL) {
+    if (
+      this.syntaxTree.right?.type !== E_TOKEN_TYPE.NUMBER_LITERAL &&
+      this.syntaxTree.right?.type !== E_TOKEN_TYPE.SET
+    ) {
       error(E_ERROR_CODES.EXECUTOR_ERROR, 'Invalid result');
     }
 
-    if (this.syntaxTree.right?.value) {
-      return JSON.parse(this.syntaxTree.right.value);
+    if (this.syntaxTree.right) {
+      return this.prepareResult();
     }
 
     return undefined;

@@ -16,6 +16,13 @@ const condLatexCloseParentheses = (type: E_TOKEN_TYPE | undefined): string =>
     ? ')'
     : '';
 
+const condSetLatexOpenParentheses = (type: E_TOKEN_TYPE | undefined): string =>
+  type && type !== E_TOKEN_TYPE.SET ? '(' : '';
+
+const condSetLatexCloseParentheses = (
+  type: E_TOKEN_TYPE | undefined,
+): string => (type !== E_TOKEN_TYPE.SET ? ')' : '');
+
 export class TAbstractSyntaxTree {
   private static readonly ML_MAP: Partial<Record<E_TOKEN_TYPE, string>> = {
     [E_TOKEN_TYPE.PLUS]: '+',
@@ -166,11 +173,48 @@ export class TAbstractSyntaxTree {
             return `\\sqrt[${this._right?.left?.latexString ?? ''}]{${this._right?._right?.latexString ?? ''}}`;
           case E_EXECUTOR_FUNCTION_NAMES.ABS:
             return `\\left|${this._right?.latexString ?? ''}\\right|`;
+          case E_EXECUTOR_FUNCTION_NAMES.UNION:
+            return `${condSetLatexOpenParentheses(
+              this._right?._left?.type,
+            )}${this._right?._left?.latexString ?? ''}${condSetLatexCloseParentheses(
+              this._right?._left?.type,
+            )}\\cup${condSetLatexOpenParentheses(
+              this._right?._right?._left?.type,
+            )}${this._right?._right?._left?.latexString ?? ''}${condSetLatexCloseParentheses(
+              this._right?._right?._left?.type,
+            )}`;
+          case E_EXECUTOR_FUNCTION_NAMES.INTERSECT:
+            return `${condSetLatexOpenParentheses(
+              this._right?._left?.type,
+            )}${this._right?._left?.latexString ?? ''}${condSetLatexCloseParentheses(
+              this._right?._left?.type,
+            )}\\cap${condSetLatexOpenParentheses(
+              this._right?._right?._left?.type,
+            )}${this._right?._right?._left?.latexString ?? ''}${condSetLatexCloseParentheses(
+              this._right?._right?._left?.type,
+            )}`;
+          case E_EXECUTOR_FUNCTION_NAMES.DIFFERENCE:
+          case E_EXECUTOR_FUNCTION_NAMES.DIFF:
+            return `${condSetLatexOpenParentheses(
+              this._right?._left?.type,
+            )}${this._right?._left?.latexString ?? ''}${condSetLatexCloseParentheses(
+              this._right?._left?.type,
+            )}\\setminus${condSetLatexOpenParentheses(
+              this._right?._right?._left?.type,
+            )}${this._right?._right?._left?.latexString ?? ''}${condSetLatexCloseParentheses(
+              this._right?._right?._left?.type,
+            )}`;
         }
 
         return `${this._left?.value}(${this._right?.latexString ?? ''})`;
       }
       case E_TOKEN_TYPE.FUNCTION_ARGS: {
+        return `${this._right?.latexString ?? ''}${this._right ? ', ' : ''}${this._left?.latexString ?? ''}`;
+      }
+      case E_TOKEN_TYPE.SET: {
+        return `[${this._right?.latexString ?? ''}]`;
+      }
+      case E_TOKEN_TYPE.SET_ITEM: {
         return `${this._right?.latexString ?? ''}${this._right ? ', ' : ''}${this._left?.latexString ?? ''}`;
       }
       case E_TOKEN_TYPE.NODE:

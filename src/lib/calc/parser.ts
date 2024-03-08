@@ -23,6 +23,12 @@ export class Scanner {
     [E_TOKEN_TYPE.COMMA]: Scanner.lowerToken(E_TOKEN_TYPE.EOF),
     [E_TOKEN_TYPE.OPEN_PAREN]: Scanner.lowerToken(E_TOKEN_TYPE.OPEN_PAREN),
     [E_TOKEN_TYPE.CLOSE_PAREN]: Scanner.lowerToken(E_TOKEN_TYPE.CLOSE_PAREN),
+    [E_TOKEN_TYPE.SQUARE_OPEN_PAREN]: Scanner.lowerToken(
+      E_TOKEN_TYPE.SQUARE_OPEN_PAREN,
+    ),
+    [E_TOKEN_TYPE.SQUARE_CLOSE_PAREN]: Scanner.lowerToken(
+      E_TOKEN_TYPE.SQUARE_CLOSE_PAREN,
+    ),
     [E_TOKEN_TYPE.NUMBER_LITERAL]: Scanner.lowerToken(
       E_TOKEN_TYPE.NUMBER_LITERAL,
     ),
@@ -89,6 +95,8 @@ export class Scanner {
     [E_TOKEN_TYPE.FUNCTION_ARGS]: Scanner.lowerToken(
       E_TOKEN_TYPE.FUNCTION_ARGS,
     ),
+    [E_TOKEN_TYPE.SET]: Scanner.lowerToken(E_TOKEN_TYPE.SET),
+    [E_TOKEN_TYPE.SET_ITEM]: Scanner.lowerToken(E_TOKEN_TYPE.SET_ITEM),
     [E_TOKEN_TYPE.NODE]: Scanner.lowerToken(E_TOKEN_TYPE.NODE),
   };
 
@@ -114,7 +122,6 @@ export class Scanner {
   }
 
   private processFunctionArgs(): TAbstractSyntaxTree | undefined {
-    // console.log(this.currentToken);
     if (this.currentToken.type === E_TOKEN_TYPE.CLOSE_PAREN) {
       this.getToken();
       return undefined;
@@ -153,6 +160,9 @@ export class Scanner {
     switch (this.currentToken.type) {
       case E_TOKEN_TYPE.OPEN_PAREN:
         x = this.parenthesizedExpression();
+        break;
+      case E_TOKEN_TYPE.SQUARE_OPEN_PAREN:
+        x = this.processSet();
         break;
       case E_TOKEN_TYPE.FUNCTION:
         const nameNode = new TAbstractSyntaxTree(
@@ -194,7 +204,11 @@ export class Scanner {
         break;
       default:
         throw new SyntaxError(
-          `Expected expression on line ${this.currentToken.line}/${this.currentToken.column}:${this.currentToken.column + this.currentToken.width}, got "${this.currentToken.value}"`,
+          `Expected expression on line ${
+            this.currentToken.line
+          }/${this.currentToken.column}:${
+            this.currentToken.column + this.currentToken.width
+          }, got "${this.currentToken.value}"`,
         );
     }
 
@@ -245,12 +259,42 @@ export class Scanner {
     return tree;
   }
 
+  private processSet(): TAbstractSyntaxTree {
+    const tree = new TAbstractSyntaxTree(E_TOKEN_TYPE.SET);
+
+    this.expectToken(E_TOKEN_TYPE.SQUARE_OPEN_PAREN);
+    this.getToken();
+
+    if (this.currentToken.type === E_TOKEN_TYPE.SQUARE_CLOSE_PAREN) {
+      this.getToken();
+      return tree;
+    }
+
+    tree.right = new TAbstractSyntaxTree(E_TOKEN_TYPE.SET_ITEM);
+    tree.right.left = this.processExpression(0);
+
+    while (this.currentToken.type === E_TOKEN_TYPE.COMMA) {
+      this.expectToken(E_TOKEN_TYPE.COMMA);
+      this.getToken();
+      tree.right = new TAbstractSyntaxTree(
+        E_TOKEN_TYPE.SET_ITEM,
+        undefined,
+        this.processExpression(0),
+        tree.right,
+      );
+    }
+
+    this.expectToken(E_TOKEN_TYPE.SQUARE_CLOSE_PAREN);
+
+    this.getToken();
+
+    return tree;
+  }
+
   public processQuery(): TAbstractSyntaxTree {
     this.getToken();
 
     const tree = new TAbstractSyntaxTree();
-
-    // console.log(this.currentToken);
 
     switch (this.currentToken.type) {
       case E_TOKEN_TYPE.FUNCTION:
@@ -258,6 +302,7 @@ export class Scanner {
       case E_TOKEN_TYPE.PLUS:
       case E_TOKEN_TYPE.NUMBER_LITERAL:
       case E_TOKEN_TYPE.OPEN_PAREN:
+      case E_TOKEN_TYPE.SQUARE_OPEN_PAREN:
         tree.type = E_TOKEN_TYPE.NODE;
         tree.right = this.processExpression(0);
         break;
