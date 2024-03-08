@@ -1,0 +1,5 @@
+export const enum E_ERROR_CODES {
+  LEXICAL_ERROR = 1,
+  SYNTAX_ERROR = 2,
+  EXECUTOR_ERROR = 3,
+}
