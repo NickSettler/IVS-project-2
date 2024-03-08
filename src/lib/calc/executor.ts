@@ -4,6 +4,7 @@ import { E_TOKEN_TYPE } from './types/common';
 import { error } from './error';
 import { E_ERROR_CODES } from './types/errors';
 import { E_EXECUTOR_FUNCTION_NAMES } from './types/executor.ts';
+import { groupBy, sortBy } from 'lodash';
 
 export class Executor {
   private static readonly ARITHMETIC_MAP: Partial<
@@ -35,7 +36,7 @@ export class Executor {
   private static readonly SET_MAP: Partial<
     Record<
       E_EXECUTOR_FUNCTION_NAMES,
-      (...sets: Array<Array<number>>) => Array<number>
+      (...sets: Array<Array<number>>) => Array<number> | number
     >
   > = {
     [E_EXECUTOR_FUNCTION_NAMES.UNION]: (set1, set2) =>
@@ -46,6 +47,57 @@ export class Executor {
       set1.filter((value) => !set2.includes(value)),
     [E_EXECUTOR_FUNCTION_NAMES.DIFF]: (set1, set2) =>
       set1.filter((value) => !set2.includes(value)),
+    [E_EXECUTOR_FUNCTION_NAMES.SUM]: (set1) =>
+      set1.reduce((acc, value) => acc + value, 0),
+    [E_EXECUTOR_FUNCTION_NAMES.MIN]: (set1) => Math.min(...set1),
+    [E_EXECUTOR_FUNCTION_NAMES.MAX]: (set1) => Math.max(...set1),
+    [E_EXECUTOR_FUNCTION_NAMES.COUNT]: (set1) => set1.length,
+    [E_EXECUTOR_FUNCTION_NAMES.MEAN]: (set1) =>
+      set1.reduce((acc, value) => acc + value, 0) / set1.length,
+    [E_EXECUTOR_FUNCTION_NAMES.MEDIAN]: (set1) => {
+      const sorted = set1.sort((a, b) => a - b);
+      const half = Math.floor(sorted.length / 2);
+
+      if (sorted.length % 2) {
+        return sorted[half];
+      }
+
+      return (sorted[half - 1] + sorted[half]) / 2.0;
+    },
+    [E_EXECUTOR_FUNCTION_NAMES.MODE]: (set1) => {
+      if (set1.length === 0) return 0;
+      return sortBy(groupBy(set1), (arr) => arr.length).pop()![0];
+    },
+    [E_EXECUTOR_FUNCTION_NAMES.RANGE]: (set1) =>
+      Math.max(...set1) - Math.min(...set1),
+    [E_EXECUTOR_FUNCTION_NAMES.VARIANCE]: (set1) => {
+      const mean = this.SET_MAP.mean!(set1) as number;
+      return (
+        set1.reduce((acc, value) => acc + (value - mean) ** 2, 0) / set1.length
+      );
+    },
+    [E_EXECUTOR_FUNCTION_NAMES.VAR]: (set1) => {
+      const mean = this.SET_MAP.mean!(set1) as number;
+      return (
+        set1.reduce((acc, value) => acc + (value - mean) ** 2, 0) / set1.length
+      );
+    },
+    [E_EXECUTOR_FUNCTION_NAMES.STDDEV]: (set1) => {
+      const mean = this.SET_MAP.mean!(set1) as number;
+      return Math.sqrt(
+        set1.reduce((acc, value) => acc + (value - mean) ** 2, 0) /
+          (set1.length - 1),
+      );
+    },
+    [E_EXECUTOR_FUNCTION_NAMES.MAD]: (set1) => {
+      const mean = this.SET_MAP.mean!(set1) as number;
+      return (
+        set1.reduce((acc, value) => acc + Math.abs(value - mean), 0) /
+        set1.length
+      );
+    },
+    [E_EXECUTOR_FUNCTION_NAMES.RMS]: (set1) =>
+      Math.sqrt(set1.reduce((acc, value) => acc + value ** 2, 0) / set1.length),
   };
 
   private static readonly FUNCTIONS_MAP: Partial<
@@ -318,19 +370,10 @@ export class Executor {
 
           const result = operation(...sets);
 
-          node.type = E_TOKEN_TYPE.SET;
-          node.value = undefined;
-          node.left = undefined;
-          node.right = new TAbstractSyntaxTree(
-            E_TOKEN_TYPE.SET_ITEM,
-            undefined,
-            new TAbstractSyntaxTree(
-              E_TOKEN_TYPE.NUMBER_LITERAL,
-              JSON.stringify(result.shift()),
-            ),
-          );
-
-          while (result.length > 0) {
+          if (Array.isArray(result)) {
+            node.type = E_TOKEN_TYPE.SET;
+            node.value = undefined;
+            node.left = undefined;
             node.right = new TAbstractSyntaxTree(
               E_TOKEN_TYPE.SET_ITEM,
               undefined,
@@ -338,8 +381,24 @@ export class Executor {
                 E_TOKEN_TYPE.NUMBER_LITERAL,
                 JSON.stringify(result.shift()),
               ),
-              node.right,
             );
+
+            while (result.length > 0) {
+              node.right = new TAbstractSyntaxTree(
+                E_TOKEN_TYPE.SET_ITEM,
+                undefined,
+                new TAbstractSyntaxTree(
+                  E_TOKEN_TYPE.NUMBER_LITERAL,
+                  JSON.stringify(result.shift()),
+                ),
+                node.right,
+              );
+            }
+          } else {
+            node.type = E_TOKEN_TYPE.NUMBER_LITERAL;
+            node.value = JSON.stringify(result);
+            node.left = undefined;
+            node.right = undefined;
           }
         }
       }

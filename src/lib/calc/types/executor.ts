@@ -25,4 +25,19 @@ export enum E_EXECUTOR_FUNCTION_NAMES {
   INTERSECT = 'intersect',
   DIFFERENCE = 'difference',
   DIFF = 'diff',
+
+  // Statistical functions
+  SUM = 'sum',
+  MIN = 'min',
+  MAX = 'max',
+  COUNT = 'count',
+  MEAN = 'mean',
+  MEDIAN = 'median',
+  MODE = 'mode',
+  RANGE = 'range',
+  VARIANCE = 'variance',
+  VAR = 'var',
+  STDDEV = 'stddev',
+  MAD = 'MAD',
+  RMS = 'RMS',
 }
