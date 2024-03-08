@@ -40,4 +40,9 @@ export enum E_EXECUTOR_FUNCTION_NAMES {
   STDDEV = 'stddev',
   MAD = 'MAD',
   RMS = 'RMS',
+
+  // Random functions
+  RAND = 'rand',
+  RANDINT = 'randint',
+  RANDN = 'randn',
 }

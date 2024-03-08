@@ -39,21 +39,65 @@ export class Executor {
       (...sets: Array<Array<number>>) => Array<number> | number
     >
   > = {
+    /**
+     * Returns the union of two sets
+     * @param set1 set
+     * @param set2 set
+     */
     [E_EXECUTOR_FUNCTION_NAMES.UNION]: (set1, set2) =>
       Array.from(new Set([...set1, ...set2])),
+    /**
+     * Returns the intersection of two sets
+     * @param set1 set
+     * @param set2 set
+     */
     [E_EXECUTOR_FUNCTION_NAMES.INTERSECT]: (set1, set2) =>
       set1.filter((value) => set2.includes(value)),
+    /**
+     * Returns the difference of two sets
+     * @param set1 set
+     * @param set2 set
+     */
     [E_EXECUTOR_FUNCTION_NAMES.DIFFERENCE]: (set1, set2) =>
       set1.filter((value) => !set2.includes(value)),
+    /**
+     * Returns the difference of a set
+     * @param set1 set
+     * @param set2 set
+     */
     [E_EXECUTOR_FUNCTION_NAMES.DIFF]: (set1, set2) =>
       set1.filter((value) => !set2.includes(value)),
+    /**
+     * Returns the sum of a set
+     * @param set1 set
+     */
     [E_EXECUTOR_FUNCTION_NAMES.SUM]: (set1) =>
       set1.reduce((acc, value) => acc + value, 0),
+    /**
+     * Returns the minimum value of a set
+     * @param set1 set
+     */
     [E_EXECUTOR_FUNCTION_NAMES.MIN]: (set1) => Math.min(...set1),
+    /**
+     * Returns the maximum value of a set
+     * @param set1 set
+     */
     [E_EXECUTOR_FUNCTION_NAMES.MAX]: (set1) => Math.max(...set1),
+    /**
+     * Returns the number of elements in a set
+     * @param set1 set
+     */
     [E_EXECUTOR_FUNCTION_NAMES.COUNT]: (set1) => set1.length,
+    /**
+     * Returns the mean value of a set
+     * @param set1 set
+     */
     [E_EXECUTOR_FUNCTION_NAMES.MEAN]: (set1) =>
       set1.reduce((acc, value) => acc + value, 0) / set1.length,
+    /**
+     * Returns the median value of a set
+     * @param set1 set
+     */
     [E_EXECUTOR_FUNCTION_NAMES.MEDIAN]: (set1) => {
       const sorted = set1.sort((a, b) => a - b);
       const half = Math.floor(sorted.length / 2);
@@ -64,24 +108,44 @@ export class Executor {
 
       return (sorted[half - 1] + sorted[half]) / 2.0;
     },
+    /**
+     * Returns the mode value of a set (the most common value)
+     * @param set1 set
+     */
     [E_EXECUTOR_FUNCTION_NAMES.MODE]: (set1) => {
       if (set1.length === 0) return 0;
       return sortBy(groupBy(set1), (arr) => arr.length).pop()![0];
     },
+    /**
+     * Returns the range of a set (the difference between the maximum and minimum values)
+     * @param set1 set
+     */
     [E_EXECUTOR_FUNCTION_NAMES.RANGE]: (set1) =>
       Math.max(...set1) - Math.min(...set1),
+    /**
+     * Returns the variance of a set (the average of the squared differences from the mean)
+     * @param set1 set
+     */
     [E_EXECUTOR_FUNCTION_NAMES.VARIANCE]: (set1) => {
       const mean = this.SET_MAP.mean!(set1) as number;
       return (
         set1.reduce((acc, value) => acc + (value - mean) ** 2, 0) / set1.length
       );
     },
+    /**
+     * Returns the variance of a set (the average of the squared differences from the mean)
+     * @param set1 set
+     */
     [E_EXECUTOR_FUNCTION_NAMES.VAR]: (set1) => {
       const mean = this.SET_MAP.mean!(set1) as number;
       return (
         set1.reduce((acc, value) => acc + (value - mean) ** 2, 0) / set1.length
       );
     },
+    /**
+     * Returns the standard deviation of a set (the square root of the variance)
+     * @param set1 set
+     */
     [E_EXECUTOR_FUNCTION_NAMES.STDDEV]: (set1) => {
       const mean = this.SET_MAP.mean!(set1) as number;
       return Math.sqrt(
@@ -89,6 +153,10 @@ export class Executor {
           (set1.length - 1),
       );
     },
+    /**
+     * Returns the mean absolute deviation of a set (the average of the absolute differences from the mean)
+     * @param set1
+     */
     [E_EXECUTOR_FUNCTION_NAMES.MAD]: (set1) => {
       const mean = this.SET_MAP.mean!(set1) as number;
       return (
@@ -96,6 +164,10 @@ export class Executor {
         set1.length
       );
     },
+    /**
+     * Returns the root-mean-square of a set (the square root of the average of the squared values)
+     * @param set1 set
+     */
     [E_EXECUTOR_FUNCTION_NAMES.RMS]: (set1) =>
       Math.sqrt(set1.reduce((acc, value) => acc + value ** 2, 0) / set1.length),
   };
@@ -104,27 +176,127 @@ export class Executor {
     Record<E_EXECUTOR_FUNCTION_NAMES, (...args: Array<number>) => number>
   > = {
     // Number functions
+    /**
+     * Returns the absolute value of a number
+     * @param val value
+     */
     [E_EXECUTOR_FUNCTION_NAMES.ABS]: Math.abs,
+    /**
+     * Returns the smallest integer greater than or equal to a number
+     * @param val value
+     */
     [E_EXECUTOR_FUNCTION_NAMES.CEIL]: Math.ceil,
+    /**
+     * Returns the largest integer less than or equal to a number
+     * @param val value
+     */
     [E_EXECUTOR_FUNCTION_NAMES.FLOOR]: Math.floor,
+    /**
+     * Returns the value of a number rounded to the nearest integer
+     * @param val value
+     */
     [E_EXECUTOR_FUNCTION_NAMES.ROUND]: Math.round,
 
     // Trigonometric functions
+    /**
+     * Returns the sine of a number
+     * @param val value in radians
+     */
     [E_EXECUTOR_FUNCTION_NAMES.SIN]: Math.sin,
+    /**
+     * Returns the cosine of a number
+     * @param val value in radians
+     */
     [E_EXECUTOR_FUNCTION_NAMES.COS]: Math.cos,
+    /**
+     * Returns the tangent of a number
+     * @param val value in radians
+     */
     [E_EXECUTOR_FUNCTION_NAMES.TAN]: Math.tan,
+    /**
+     * Returns the cotangent of a number
+     * @param val value in radians
+     */
     [E_EXECUTOR_FUNCTION_NAMES.COT]: (val) => 1 / Math.tan(val),
+    /**
+     * Returns the cotangent of a number
+     * @param val value in radians
+     */
     [E_EXECUTOR_FUNCTION_NAMES.CTG]: (val) => 1 / Math.tan(val),
+    /**
+     * Returns the arcsine of a number
+     * @param val value in radians
+     */
     [E_EXECUTOR_FUNCTION_NAMES.ASIN]: Math.asin,
+    /**
+     * Returns the arccosine of a number
+     * @param val value in radians
+     */
     [E_EXECUTOR_FUNCTION_NAMES.ACOS]: Math.acos,
+    /**
+     * Returns the arctangent of a number
+     * @param val value in radians
+     */
     [E_EXECUTOR_FUNCTION_NAMES.ATAN]: Math.atan,
+    /**
+     * Returns the arccotangent of a number
+     * @param val value in radians
+     */
     [E_EXECUTOR_FUNCTION_NAMES.ACOT]: (val) => Math.PI / 2 - Math.atan(val),
+    /**
+     * Returns the arccotangent of a number
+     * @param val value in radians
+     */
     [E_EXECUTOR_FUNCTION_NAMES.ACTG]: (val) => Math.PI / 2 - Math.atan(val),
+    /**
+     * Converts radians to degrees
+     * @param val value in radians
+     */
     [E_EXECUTOR_FUNCTION_NAMES.R2D]: (val) => (val * 180) / Math.PI,
+    /**
+     * Converts degrees to radians
+     * @param val value in degrees
+     */
     [E_EXECUTOR_FUNCTION_NAMES.D2R]: (val) => (val * Math.PI) / 180,
 
+    /**
+     * Returns the square root of a number
+     */
     [E_EXECUTOR_FUNCTION_NAMES.SQRT]: Math.sqrt,
+    /**
+     * Returns the n-th root of a number
+     * @param val value
+     * @param n root
+     */
     [E_EXECUTOR_FUNCTION_NAMES.SQRTN]: (val, n) => Math.pow(val, 1 / n),
+
+    /**
+     * Returns a random number between 0 and 1
+     */
+    [E_EXECUTOR_FUNCTION_NAMES.RAND]: () => Math.random(),
+    /**
+     * Returns a random integer
+     * @param min minimum value
+     * @param max maximum value
+     */
+    [E_EXECUTOR_FUNCTION_NAMES.RANDINT]: (min, max) =>
+      Math.floor(Math.random() * (max - min + 1) + min),
+    /**
+     * Returns a random number from a normal distribution
+     * @param mean mean value
+     * @param stdDev standard deviation
+     */
+    [E_EXECUTOR_FUNCTION_NAMES.RANDN]: (mean, stdDev) => {
+      let u = 0;
+      let v = 0;
+
+      while (u === 0) u = Math.random();
+      while (v === 0) v = Math.random();
+
+      return (
+        mean + stdDev * Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v)
+      );
+    },
   };
 
   constructor(private readonly syntaxTree: TAbstractSyntaxTree) {
