@@ -1,6 +1,6 @@
 import { E_TOKEN_TYPE } from './types/common';
 import { E_SYNTAX_TREE_TRAVERSE_ORDER } from './types/ast';
-import { E_EXECUTOR_FUNCTION_NAMES } from './types/executor.ts';
+import { E_EXECUTOR_FUNCTION_NAMES } from './types/executor';
 
 const condLatexOpenParentheses = (type: E_TOKEN_TYPE | undefined): string =>
   type !== E_TOKEN_TYPE.NUMBER_LITERAL &&
@@ -204,6 +204,12 @@ export class TAbstractSyntaxTree {
             )}${this._right?._right?._left?.latexString ?? ''}${condSetLatexCloseParentheses(
               this._right?._right?._left?.type,
             )}`;
+          case E_EXECUTOR_FUNCTION_NAMES.MEAN:
+            return `mean(\\overline{${this._right?.latexString ?? ''}})`;
+          case E_EXECUTOR_FUNCTION_NAMES.MEDIAN:
+            return `${this._left?.value}(${this._right?.latexString ?? ''})_{0.5})`;
+          case E_EXECUTOR_FUNCTION_NAMES.MODE:
+            return `mode(${this._right?.latexString ?? ''})`;
         }
 
         return `${this._left?.value}(${this._right?.latexString ?? ''})`;

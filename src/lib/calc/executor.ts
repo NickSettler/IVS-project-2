@@ -3,7 +3,7 @@ import { E_SYNTAX_TREE_TRAVERSE_ORDER } from './types/ast';
 import { E_TOKEN_TYPE } from './types/common';
 import { error } from './error';
 import { E_ERROR_CODES } from './types/errors';
-import { E_EXECUTOR_FUNCTION_NAMES } from './types/executor.ts';
+import { E_EXECUTOR_FUNCTION_NAMES } from './types/executor';
 import { groupBy, sortBy } from 'lodash';
 
 export class Executor {
