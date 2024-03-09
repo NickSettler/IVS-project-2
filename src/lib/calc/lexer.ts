@@ -93,6 +93,10 @@ export class Lexer {
               }
 
               return this.prepareReturn(token);
+            case '.':
+              this._state = E_LEXER_STATE.NUMBER_LITERAL;
+              token.value = `0${currentChar}`;
+              break;
             default:
               if (currentChar?.match(/[a-zA-Z]/)) {
                 this._state = E_LEXER_STATE.FUNCTION_STATE;
