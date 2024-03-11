@@ -1,4 +1,4 @@
-import { JSX } from 'react';
+import { JSX, useCallback, useEffect, useState } from 'react';
 import {
   Box,
   Checkbox,
@@ -29,7 +29,22 @@ export const AppDrawer = ({
 }: TAppDrawerProps): JSX.Element => {
   const theme = useTheme();
 
-  const drawerWidth = theme.breakpoints.down('md') ? '100%' : 300;
+  const [drawerWidth, setDrawerWidth] = useState<string>('300px');
+
+  const handleDocumentResize = useCallback(() => {
+    setDrawerWidth(
+      window.innerWidth > theme.breakpoints.values.md ? '300px' : '100%',
+    );
+  }, [theme.breakpoints.values.md]);
+
+  useEffect(() => {
+    handleDocumentResize();
+    window.addEventListener('resize', handleDocumentResize);
+
+    return () => {
+      window.removeEventListener('resize', handleDocumentResize);
+    };
+  }, [handleDocumentResize]);
 
   const container =
     window !== undefined ? () => window.document.body : undefined;
@@ -52,7 +67,7 @@ export const AppDrawer = ({
         keepMounted: true,
       }}
       sx={{
-        display: { xs: 'block', sm: 'none' },
+        display: 'block',
         '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
       }}
     >
