@@ -1,3 +1,5 @@
+import { ButtonProps } from '@mui/material';
+
 export enum E_CALCULATOR_BUTTONS {
   NUMBER_1 = '1',
   NUMBER_2 = '2',
@@ -143,19 +145,26 @@ export const CalculatorButtonActions: Partial<
   ),
 };
 
-console.log(CalculatorButtonActions);
-
 export type TCalculatorButton = {
   value: E_CALCULATOR_BUTTONS;
   mode?: E_CALCULATOR_BUTTON_MODE;
+  color?: ButtonProps['color'];
 };
 
 export const CalculatorBasicButtons: Array<TCalculatorButton> = [
   { value: E_CALCULATOR_BUTTONS.NUMBER_7 },
   { value: E_CALCULATOR_BUTTONS.NUMBER_8 },
   { value: E_CALCULATOR_BUTTONS.NUMBER_9 },
-  { value: E_CALCULATOR_BUTTONS.DELETE, mode: E_CALCULATOR_BUTTON_MODE.ACTION },
-  { value: E_CALCULATOR_BUTTONS.CLEAR, mode: E_CALCULATOR_BUTTON_MODE.ACTION },
+  {
+    value: E_CALCULATOR_BUTTONS.DELETE,
+    mode: E_CALCULATOR_BUTTON_MODE.ACTION,
+    color: 'secondary',
+  },
+  {
+    value: E_CALCULATOR_BUTTONS.CLEAR,
+    mode: E_CALCULATOR_BUTTON_MODE.ACTION,
+    color: 'secondary',
+  },
   { value: E_CALCULATOR_BUTTONS.NUMBER_4 },
   { value: E_CALCULATOR_BUTTONS.NUMBER_5 },
   { value: E_CALCULATOR_BUTTONS.NUMBER_6 },

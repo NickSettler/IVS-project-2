@@ -7,7 +7,15 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { Box, Stack, styled, Tab, Tabs, TextField } from '@mui/material';
+import {
+  Box,
+  ButtonProps,
+  Stack,
+  styled,
+  Tab,
+  Tabs,
+  TextField,
+} from '@mui/material';
 import { Executor, Lexer, Scanner } from '../../lib/calc';
 import { cloneDeep, isEmpty } from 'lodash';
 import { MathSVG } from '../math/Math.tsx';
@@ -21,6 +29,7 @@ import {
   CalculatorTrigonometricButtons,
   E_CALCULATOR_BUTTON_MODE,
   E_CALCULATOR_BUTTONS,
+  TCalculatorButton,
 } from './types.ts';
 
 const LatexExpressionBox = styled(Box)(({ theme }) => ({
@@ -41,11 +50,6 @@ const ButtonsContainer = styled(Box)(({ theme }) => ({
   display: 'grid',
   gap: theme.spacing(1),
   gridTemplateColumns: 'repeat(5, 1fr)',
-
-  '& > button': {
-    width: '100%',
-    aspectRatio: '1/1',
-  },
 }));
 
 const OperationsTabs = styled(Tabs)({
@@ -58,7 +62,7 @@ const OperationsContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   gap: theme.spacing(1),
-  overflowY: 'auto',
+  overflow: 'hidden',
   flexGrow: 1,
 
   '& > *': {
@@ -89,14 +93,7 @@ const CustomTabPanel = (props: TTabPanelProps) => {
   const { children, value, index, ...other } = props;
 
   return (
-    <div
-      role='tabpanel'
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      style={{ height: '100%' }}
-      {...other}
-    >
+    <div role='tabpanel' hidden={value !== index} {...other}>
       {value === index && <OperationsContainer>{children}</OperationsContainer>}
     </div>
   );
@@ -212,14 +209,30 @@ export const Calculator = (): JSX.Element => {
     setCurrentOperationsTab(newValue as E_CALCULATOR_OPERATIONS_TABS);
   };
 
+  const BasicCalculatorButton =
+    (size?: Exclude<ButtonProps['size'], 'large'>, isSquare = false) =>
+    // eslint-disable-next-line react/display-name
+    ({ value, mode, color }: TCalculatorButton) => (
+      <CalculatorButton
+        key={value}
+        value={value}
+        isSquare={isSquare}
+        {...(mode && { mode })}
+        {...(color && { color })}
+        {...(size && { size })}
+        onClick={handleCalcButtonClick}
+      />
+    );
+
   return (
-    <Stack style={{ height: '100%' }}>
+    <Stack>
       <LatexExpressionBox>
         <MathSVG tex={latexExpression} />
       </LatexExpressionBox>
       <ExpressionField
         ref={inputRef}
         value={expression}
+        label='Expression'
         onInput={handleExpressionChange}
         onKeyUp={handleExpressionFieldCaretChange}
         onClick={handleExpressionFieldCaretChange}
@@ -228,17 +241,15 @@ export const Calculator = (): JSX.Element => {
         autoFocus
       />
       <ButtonsContainer>
-        {CalculatorBasicButtons.map((button) => (
-          <CalculatorButton
-            key={button.value}
-            value={button.value}
-            {...(button.mode && { mode: button.mode })}
-            onClick={handleCalcButtonClick}
-          />
-        ))}
+        {CalculatorBasicButtons.map(BasicCalculatorButton('medium', true))}
       </ButtonsContainer>
       <Box>
-        <OperationsTabs value={currentOperationsTab} onChange={handleTabChange}>
+        <OperationsTabs
+          value={currentOperationsTab}
+          variant={'scrollable'}
+          scrollButtons={false}
+          onChange={handleTabChange}
+        >
           <Tab
             label='Trigonometry'
             value={E_CALCULATOR_OPERATIONS_TABS.TRIGONOMETRY}
@@ -255,17 +266,7 @@ export const Calculator = (): JSX.Element => {
           index={E_CALCULATOR_OPERATIONS_TABS.TRIGONOMETRY}
         >
           {CalculatorTrigonometricButtons.map((row, index) => (
-            <Box key={index}>
-              {row.map((button) => (
-                <CalculatorButton
-                  key={button.value}
-                  value={button.value}
-                  size={'small'}
-                  {...(button.mode && { mode: button.mode })}
-                  onClick={handleCalcButtonClick}
-                />
-              ))}
-            </Box>
+            <Box key={index}>{row.map(BasicCalculatorButton('small'))}</Box>
           ))}
         </CustomTabPanel>
         <CustomTabPanel
@@ -273,17 +274,7 @@ export const Calculator = (): JSX.Element => {
           index={E_CALCULATOR_OPERATIONS_TABS.SETS}
         >
           {CalculatorSetButtons.map((row, index) => (
-            <Box key={index}>
-              {row.map((button) => (
-                <CalculatorButton
-                  key={button.value}
-                  value={button.value}
-                  size={'small'}
-                  {...(button.mode && { mode: button.mode })}
-                  onClick={handleCalcButtonClick}
-                />
-              ))}
-            </Box>
+            <Box key={index}>{row.map(BasicCalculatorButton('small'))}</Box>
           ))}
         </CustomTabPanel>
         <CustomTabPanel
@@ -291,17 +282,7 @@ export const Calculator = (): JSX.Element => {
           index={E_CALCULATOR_OPERATIONS_TABS.STATISTICS}
         >
           {CalculatorStatisticalButtons.map((row, index) => (
-            <Box key={index}>
-              {row.map((button) => (
-                <CalculatorButton
-                  key={button.value}
-                  value={button.value}
-                  size={'small'}
-                  {...(button.mode && { mode: button.mode })}
-                  onClick={handleCalcButtonClick}
-                />
-              ))}
-            </Box>
+            <Box key={index}>{row.map(BasicCalculatorButton('small'))}</Box>
           ))}
         </CustomTabPanel>
         <CustomTabPanel
@@ -309,17 +290,7 @@ export const Calculator = (): JSX.Element => {
           index={E_CALCULATOR_OPERATIONS_TABS.RANDOM}
         >
           {CalculatorRandomButtons.map((row, index) => (
-            <Box key={index}>
-              {row.map((button) => (
-                <CalculatorButton
-                  key={button.value}
-                  value={button.value}
-                  size={'small'}
-                  {...(button.mode && { mode: button.mode })}
-                  onClick={handleCalcButtonClick}
-                />
-              ))}
-            </Box>
+            <Box key={index}>{row.map(BasicCalculatorButton('small'))}</Box>
           ))}
         </CustomTabPanel>
       </Box>
