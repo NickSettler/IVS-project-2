@@ -12,6 +12,7 @@ import {
   Box,
   Button,
   ButtonProps,
+  IconButton,
   Stack,
   styled,
   Tab,
@@ -19,7 +20,13 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { Executor, Lexer, Scanner, TAbstractSyntaxTree } from '../../lib/calc';
+import {
+  Executor,
+  isExpressionValid,
+  Lexer,
+  Scanner,
+  TAbstractSyntaxTree,
+} from '../../lib/calc';
 import { cloneDeep, isEmpty } from 'lodash';
 import { MathSVG } from '../math/Math.tsx';
 import { CalculatorButton } from './CalculatorButton.tsx';
@@ -34,9 +41,10 @@ import {
   E_CALCULATOR_BUTTONS,
   TCalculatorButton,
 } from './types.ts';
-import { ArrowForward } from '@mui/icons-material';
+import { ArrowForward, ContentCopy, ContentPaste } from '@mui/icons-material';
 import { useLocalStorage } from 'usehooks-ts';
 import { E_LOCAL_STORAGE_KEYS } from '../../utils/local-storage';
+import toast from 'react-hot-toast';
 
 const LatexExpressionBox = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -49,7 +57,12 @@ const ExpressionField = styled(TextField)({
   borderRadius: 0,
 
   '& .MuiInputBase-root': {
+    position: 'relative',
     borderRadius: 0,
+
+    '& input': {
+      fontFamily: 'monospace',
+    },
   },
 });
 
@@ -218,6 +231,28 @@ export const Calculator = (): JSX.Element => {
     }, 0);
   };
 
+  const handleExpressionCopy = async (e: SyntheticEvent) => {
+    e.preventDefault();
+    await navigator.clipboard.writeText(expression);
+    toast.success('Expression copied to clipboard');
+  };
+
+  const handleExpressionPaste = async (e: SyntheticEvent) => {
+    e.preventDefault();
+    const clipboardExpression = await navigator.clipboard.readText();
+
+    if (isExpressionValid(clipboardExpression)) {
+      setCaretStart((prev) => prev + clipboardExpression.length);
+      setExpression((prev) => {
+        const start = prev.slice(0, caretStart);
+        const end = prev.slice(caretStart);
+        return `${start}${clipboardExpression}${end}`;
+      });
+    } else {
+      toast.error('Cannot paste invalid expression');
+    }
+  };
+
   const handleCalcButtonClick = (
     value: E_CALCULATOR_BUTTONS,
     mode: E_CALCULATOR_BUTTON_MODE,
@@ -282,8 +317,32 @@ export const Calculator = (): JSX.Element => {
           onInput={handleExpressionChange}
           onKeyUp={handleExpressionFieldCaretChange}
           onClick={handleExpressionFieldCaretChange}
+          onSelect={handleExpressionFieldCaretChange}
+          onSelectCapture={handleExpressionFieldCaretChange}
+          onCopy={handleExpressionCopy}
+          onPaste={handleExpressionPaste}
           helperText={error}
           error={!isEmpty(error)}
+          InputProps={{
+            endAdornment: (
+              <Stack direction={'row'} spacing={1}>
+                <IconButton
+                  onClick={handleExpressionCopy}
+                  size={'small'}
+                  color={'primary'}
+                >
+                  <ContentCopy />
+                </IconButton>
+                <IconButton
+                  onClick={handleExpressionPaste}
+                  size={'small'}
+                  color={'primary'}
+                >
+                  <ContentPaste />
+                </IconButton>
+              </Stack>
+            ),
+          }}
         />
         {!isAutoComputeEnabled && (
           <RunCalcButton
@@ -291,7 +350,7 @@ export const Calculator = (): JSX.Element => {
             endIcon={<ArrowForward />}
             disableElevation
             onClick={runCalculation}
-          ></RunCalcButton>
+          />
         )}
       </Stack>
       <ButtonsContainer>
