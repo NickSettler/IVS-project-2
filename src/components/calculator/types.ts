@@ -39,6 +39,7 @@ export enum E_CALCULATOR_BUTTONS {
   ACTG = 'actg()',
 
   EMPTY_SET = '\\emptyset',
+  COMMA = ',',
 
   UNION = 'union()',
   INTERSECT = 'intersect()',
@@ -239,6 +240,9 @@ export const CalculatorSetButtons: Array<Array<TCalculatorButton>> = [
     {
       value: E_CALCULATOR_BUTTONS.EMPTY_SET,
       mode: E_CALCULATOR_BUTTON_MODE.ACTION,
+    },
+    {
+      value: E_CALCULATOR_BUTTONS.COMMA,
     },
   ],
   [
