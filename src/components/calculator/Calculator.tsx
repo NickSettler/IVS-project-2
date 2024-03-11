@@ -2,6 +2,7 @@ import React, {
   ChangeEvent,
   JSX,
   SyntheticEvent,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -9,14 +10,16 @@ import React, {
 } from 'react';
 import {
   Box,
+  Button,
   ButtonProps,
   Stack,
   styled,
   Tab,
   Tabs,
   TextField,
+  Typography,
 } from '@mui/material';
-import { Executor, Lexer, Scanner } from '../../lib/calc';
+import { Executor, Lexer, Scanner, TAbstractSyntaxTree } from '../../lib/calc';
 import { cloneDeep, isEmpty } from 'lodash';
 import { MathSVG } from '../math/Math.tsx';
 import { CalculatorButton } from './CalculatorButton.tsx';
@@ -31,18 +34,35 @@ import {
   E_CALCULATOR_BUTTONS,
   TCalculatorButton,
 } from './types.ts';
+import { ArrowForward } from '@mui/icons-material';
+import { useLocalStorage } from 'usehooks-ts';
+import { E_LOCAL_STORAGE_KEYS } from '../../utils/local-storage';
 
 const LatexExpressionBox = styled(Box)(({ theme }) => ({
-  padding: theme.spacing(2),
+  display: 'flex',
+  flexDirection: 'column',
+  padding: `${theme.spacing(2)} ${theme.spacing(1)}`,
   overflowX: 'auto',
 }));
 
-const ExpressionField = styled(TextField)(({ theme }) => ({
+const ExpressionField = styled(TextField)({
   borderRadius: 0,
-  marginBottom: theme.spacing(2),
 
   '& .MuiInputBase-root': {
     borderRadius: 0,
+  },
+});
+
+const RunCalcButton = styled(Button)(({ theme }) => ({
+  padding: theme.spacing(1),
+  minWidth: 'initial',
+
+  '& .MuiButton-icon': {
+    margin: 0,
+
+    '& svg': {
+      fontSize: theme.typography.h5.fontSize,
+    },
   },
 }));
 
@@ -102,7 +122,14 @@ const CustomTabPanel = (props: TTabPanelProps) => {
 export const Calculator = (): JSX.Element => {
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const [isAutoComputeEnabled] = useLocalStorage<boolean>(
+    E_LOCAL_STORAGE_KEYS.ENABLE_AUTO_COMPUTE,
+    false,
+  );
+
   const [expression, setExpression] = useState<string>('');
+  const [expressionTree, setExpressionTree] =
+    useState<TAbstractSyntaxTree | null>(null);
   const [latexExpression, setLatexExpression] = useState<string>('');
   const [error, setError] = useState<string>('');
   const [caretStart, setCaretStart] = useState<number>(0);
@@ -112,19 +139,22 @@ export const Calculator = (): JSX.Element => {
       E_CALCULATOR_OPERATIONS_TABS.TRIGONOMETRY,
     );
 
-  const AST = useMemo(() => {
+  const updateTree = useCallback(() => {
     try {
       setError('');
+      setExpressionTree(null);
       setLatexExpression('');
       const lexer = new Lexer(expression);
-      return new Scanner(lexer.getNextToken.bind(lexer)).processQuery();
+      setExpressionTree(
+        new Scanner(lexer.getNextToken.bind(lexer)).processQuery(),
+      );
     } catch (e: any) {
       setError(e.message);
     }
   }, [expression]);
 
   const result = useMemo(() => {
-    const clonedAST = cloneDeep(AST);
+    const clonedAST = cloneDeep(expressionTree);
 
     if (!clonedAST || isEmpty(expression)) return null;
 
@@ -134,19 +164,31 @@ export const Calculator = (): JSX.Element => {
     } catch (e: any) {
       setError(e.message);
     }
-  }, [AST, expression]);
+  }, [expressionTree, expression]);
 
   useEffect(() => {
-    if (!AST) return;
+    if (!isAutoComputeEnabled) return;
 
-    setLatexExpression(AST.latexString);
-  }, [AST]);
+    updateTree();
+  }, [isAutoComputeEnabled, updateTree]);
+
+  useEffect(() => {
+    if (!expressionTree) return;
+
+    setLatexExpression(expressionTree.latexString);
+  }, [expressionTree]);
 
   useEffect(() => {
     if (!result) return;
 
     setLatexExpression((prev) => `${prev} = ${result}`);
-  }, [expression, result]);
+  }, [setExpressionTree, result]);
+
+  const runCalculation = () => {
+    if (isAutoComputeEnabled) return;
+
+    updateTree();
+  };
 
   const handleExpressionChange = (e: ChangeEvent<HTMLInputElement>) => {
     setExpression(e.target.value);
@@ -227,19 +269,31 @@ export const Calculator = (): JSX.Element => {
   return (
     <Stack>
       <LatexExpressionBox>
+        <Typography variant={'caption'}>Result</Typography>
         <MathSVG tex={latexExpression} />
       </LatexExpressionBox>
-      <ExpressionField
-        ref={inputRef}
-        value={expression}
-        label='Expression'
-        onInput={handleExpressionChange}
-        onKeyUp={handleExpressionFieldCaretChange}
-        onClick={handleExpressionFieldCaretChange}
-        helperText={error}
-        error={!isEmpty(error)}
-        autoFocus
-      />
+      <Stack direction={'row'} spacing={1} alignItems={'center'} sx={{ mb: 2 }}>
+        <ExpressionField
+          fullWidth
+          autoFocus
+          ref={inputRef}
+          value={expression}
+          label='Expression'
+          onInput={handleExpressionChange}
+          onKeyUp={handleExpressionFieldCaretChange}
+          onClick={handleExpressionFieldCaretChange}
+          helperText={error}
+          error={!isEmpty(error)}
+        />
+        {!isAutoComputeEnabled && (
+          <RunCalcButton
+            variant={'contained'}
+            endIcon={<ArrowForward />}
+            disableElevation
+            onClick={runCalculation}
+          ></RunCalcButton>
+        )}
+      </Stack>
       <ButtonsContainer>
         {CalculatorBasicButtons.map(BasicCalculatorButton('medium', true))}
       </ButtonsContainer>

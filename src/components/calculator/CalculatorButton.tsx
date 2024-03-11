@@ -21,7 +21,7 @@ const CalculatorButtonStyled = styled(Button, {
   borderRadius: 0,
   fontSize:
     size === 'medium'
-      ? theme.typography.h4.fontSize
+      ? theme.typography.h5.fontSize
       : theme.typography.h6.fontSize,
 
   ...(isSquare && {
