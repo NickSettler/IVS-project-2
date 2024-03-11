@@ -9,3 +9,4 @@ export * from './error';
 export * from './executor';
 export * from './lexer';
 export * from './parser';
+export * from './utils';
