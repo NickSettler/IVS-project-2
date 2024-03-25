@@ -1,0 +1,3 @@
+xmoise01 X (knihovna s mat. operacemi, zakladni design aplikace)
+xpasyn00 X (testovani)
+xmaroc00 X (vylepseni UI aplikace, uzivatelska prirucka)
