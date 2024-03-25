@@ -11,6 +11,7 @@ describe('Lexer tests', () => {
       const expectedToken = expected[i];
 
       if (expectedToken === undefined)
+        // eslint-disable-next-line prettier/prettier
         throw new Error('Expected token doesn\'t exist');
 
       console.log(token, expected[i]);

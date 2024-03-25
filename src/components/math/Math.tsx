@@ -2,10 +2,10 @@ import { useLayoutEffect, useRef, useState } from 'react';
 
 export const MathSVG = ({
   tex,
-  display = false,
+  isDisplay = false,
 }: {
   tex: string;
-  display?: boolean;
+  isDisplay?: boolean;
 }) => {
   const rootElementRef = useRef<HTMLSpanElement | null>(null);
 
@@ -37,7 +37,7 @@ export const MathSVG = ({
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const options = MathJax.getMetricsFor(mathElement);
-    options.display = display;
+    options.display = isDisplay;
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -54,7 +54,7 @@ export const MathSVG = ({
       .catch(function (err: any) {
         console.error(err);
       });
-  }, [tex, display, isReady]);
+  }, [tex, isDisplay, isReady]);
 
   return <span ref={rootElementRef}></span>;
 };
