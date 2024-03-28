@@ -7,7 +7,6 @@ import {
   TAbstractSyntaxTree,
 } from '../src/lib/calc';
 import { map, pick } from 'lodash';
-import { throws } from 'node:assert';
 
 type TScannerTestToken = {
   type: TAbstractSyntaxTree['type'];
