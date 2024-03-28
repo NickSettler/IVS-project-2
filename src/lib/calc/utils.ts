@@ -1,6 +1,5 @@
 import { Lexer } from './lexer.ts';
 import { Scanner } from './parser.ts';
-import { Executor } from './executor.ts';
 
 export const isExpressionValid = (expression: string): boolean => {
   try {
