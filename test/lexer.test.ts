@@ -1,5 +1,10 @@
 import { entries, map } from 'lodash';
-import { Lexer, TLexicalToken, E_TOKEN_TYPE } from '../src/lib/calc';
+import {
+  E_TOKEN_TYPE,
+  isExpressionValid,
+  Lexer,
+  TLexicalToken,
+} from '../src/lib/calc';
 
 describe('Lexer tests', () => {
   const check = (input: string, expected: Array<Partial<TLexicalToken>>) => {
@@ -13,8 +18,6 @@ describe('Lexer tests', () => {
       if (expectedToken === undefined)
         // eslint-disable-next-line prettier/prettier
         throw new Error('Expected token doesn\'t exist');
-
-      console.log(token, expected[i]);
 
       expect(token).toEqual(
         expect.objectContaining<Partial<TLexicalToken>>({
@@ -76,15 +79,15 @@ describe('Lexer tests', () => {
         { type: E_TOKEN_TYPE.DIVIDE, value: '/' },
         { type: E_TOKEN_TYPE.NUMBER_LITERAL, value: '2' },
       ],
-      '1 % 2': [
+      '1 % 2.1': [
         { type: E_TOKEN_TYPE.NUMBER_LITERAL, value: '1' },
         { type: E_TOKEN_TYPE.MODULO, value: '%' },
-        { type: E_TOKEN_TYPE.NUMBER_LITERAL, value: '2' },
+        { type: E_TOKEN_TYPE.NUMBER_LITERAL, value: '2.1' },
       ],
-      '1^2': [
+      '1^.1': [
         { type: E_TOKEN_TYPE.NUMBER_LITERAL, value: '1' },
         { type: E_TOKEN_TYPE.POWER, value: '^' },
-        { type: E_TOKEN_TYPE.NUMBER_LITERAL, value: '2' },
+        { type: E_TOKEN_TYPE.NUMBER_LITERAL, value: '0.1' },
       ],
       '1+2!': [
         { type: E_TOKEN_TYPE.NUMBER_LITERAL, value: '1' },
@@ -218,6 +221,16 @@ describe('Lexer tests', () => {
           check(input, expected);
         });
       });
+    });
+  });
+
+  describe('Utils', () => {
+    test('isExpressionValid - true', () => {
+      expect(isExpressionValid('1 + 2')).toBe(true);
+    });
+
+    test('isExpressionValid - false', () => {
+      expect(isExpressionValid('1 + #')).toBe(false);
     });
   });
 });
