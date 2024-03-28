@@ -314,8 +314,4 @@ export class Scanner {
 
     return tree;
   }
-
-  public get tree(): TAbstractSyntaxTree {
-    return this._tree;
-  }
 }

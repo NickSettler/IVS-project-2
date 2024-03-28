@@ -131,8 +131,6 @@ export class Lexer {
             return this.prepareReturn(token);
           }
           break;
-        default:
-          break;
       }
     }
 
