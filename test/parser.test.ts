@@ -8,7 +8,7 @@ import {
 } from '../src/lib/calc';
 import { map, pick } from 'lodash';
 
-type TScannerTestToken = {
+export type TScannerTestToken = {
   type: TAbstractSyntaxTree['type'];
   value: TAbstractSyntaxTree['value'];
 };
@@ -30,6 +30,8 @@ describe('Parser tests', () => {
         preOrderTokens.push(pick(node, ['left', 'right', 'type', 'value'])),
       E_SYNTAX_TREE_TRAVERSE_ORDER.PRE_ORDER,
     );
+
+    expect(preOrderTokens.length).toBe(expected.length);
 
     for (let i = 0; i < expected.length; i++) {
       expect(preOrderTokens[i]).toMatchObject(expected[i]);

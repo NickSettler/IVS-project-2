@@ -27,7 +27,7 @@ import {
   Scanner,
   TAbstractSyntaxTree,
 } from '../../lib/calc';
-import { cloneDeep, isEmpty } from 'lodash';
+import { cloneDeep, isEmpty, isNull } from 'lodash';
 import { MathSVG } from '../math/Math.tsx';
 import { CalculatorButton } from './CalculatorButton.tsx';
 import {
@@ -192,10 +192,12 @@ export const Calculator = (): JSX.Element => {
   }, [expressionTree]);
 
   useEffect(() => {
-    if (!result) return;
+    if (isNull(result)) return;
+
+    console.log(expressionTree);
 
     setLatexExpression((prev) => `${prev} = ${result}`);
-  }, [setExpressionTree, result]);
+  }, [expressionTree, result]);
 
   const runCalculation = () => {
     if (isAutoComputeEnabled) return;
