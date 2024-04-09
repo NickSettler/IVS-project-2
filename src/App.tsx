@@ -25,6 +25,8 @@ const Wrapper = styled(Box)(({ theme }) => ({
 
 const MainContainer = styled(Box)(({ theme }) => ({
   width: '100%',
+  display: 'flex',
+  flexDirection: 'column',
   padding: 0,
 
   [theme.breakpoints.down('md')]: {
@@ -34,22 +36,33 @@ const MainContainer = styled(Box)(({ theme }) => ({
 
 const ContentContainer = styled(Box)(({ theme }) => ({
   width: '100%',
-  height: '100%',
+  maxHeight: 'calc(100vh - 64px - 8px)',
   display: 'flex',
+  flexGrow: 1,
   gap: theme.spacing(2),
 
   [theme.breakpoints.down('md')]: {
+    maxHeight: 'auto',
     flexDirection: 'column',
   },
 
   '& > *': {
+    height: '100%',
+
+    '&:first-child': {
+      width: '40%',
+    },
+
     '&:last-child': {
-      flexGrow: 1,
+      width: '60%',
     },
 
     [theme.breakpoints.down('md')]: {
-      flexGrow: 0,
-      width: '100%',
+      height: 'auto',
+
+      '&:first-child, &:last-child': {
+        width: '100%',
+      },
     },
   },
 }));
