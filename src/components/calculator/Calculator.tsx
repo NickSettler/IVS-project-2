@@ -194,8 +194,6 @@ export const Calculator = (): JSX.Element => {
   useEffect(() => {
     if (isNull(result)) return;
 
-    console.log(expressionTree);
-
     setLatexExpression((prev) => `${prev} = ${result}`);
   }, [expressionTree, result]);
 
