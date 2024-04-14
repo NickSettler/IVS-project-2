@@ -29,8 +29,6 @@ describe('Executor tests', () => {
       E_SYNTAX_TREE_TRAVERSE_ORDER.PRE_ORDER,
     );
 
-    console.log(tree);
-
     expect(preOrderTokens.length).toBe(expected.length);
 
     for (let i = 0; i < expected.length; i++) {
