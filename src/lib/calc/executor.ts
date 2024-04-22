@@ -4,7 +4,7 @@ import { E_TOKEN_TYPE } from './types/common';
 import { error } from './error';
 import { E_ERROR_CODES } from './types/errors';
 import { E_EXECUTOR_FUNCTION_NAMES } from './types/executor';
-import { groupBy, sortBy } from 'lodash';
+import { cloneDeep, groupBy, sortBy } from 'lodash';
 
 export class Executor {
   private static readonly ARITHMETIC_MAP: Partial<
@@ -93,7 +93,7 @@ export class Executor {
      * @param set1 set
      */
     [E_EXECUTOR_FUNCTION_NAMES.MEAN]: (set1) =>
-      set1.reduce((acc, value) => acc + value, 0) / set1.length,
+      set1.reduce((acc, value) => acc + value, 0) / (set1.length || 1),
     /**
      * Returns the median value of a set
      * @param set1 set
@@ -546,14 +546,18 @@ export class Executor {
             node.type = E_TOKEN_TYPE.SET;
             node.value = undefined;
             node.left = undefined;
-            node.right = new TAbstractSyntaxTree(
-              E_TOKEN_TYPE.SET_ITEM,
-              undefined,
-              new TAbstractSyntaxTree(
-                E_TOKEN_TYPE.NUMBER_LITERAL,
-                JSON.stringify(result.shift()),
-              ),
-            );
+            if (result.length) {
+              node.right = new TAbstractSyntaxTree(
+                E_TOKEN_TYPE.SET_ITEM,
+                undefined,
+                new TAbstractSyntaxTree(
+                  E_TOKEN_TYPE.NUMBER_LITERAL,
+                  JSON.stringify(result.shift()),
+                ),
+              );
+            } else {
+              node.right = undefined;
+            }
 
             while (result.length > 0) {
               node.right = new TAbstractSyntaxTree(

@@ -72,7 +72,7 @@ export class Scanner {
       isRightAssociative: false,
       isBinary: false,
       isUnary: true,
-      precedence: 15,
+      precedence: 14,
     },
     [E_TOKEN_TYPE.MODULO]: {
       type: E_TOKEN_TYPE.MODULO,
@@ -212,6 +212,20 @@ export class Scanner {
         );
     }
 
+    while (Scanner.SYNTAX_TOKEN_ATTRIBUTES[this.currentToken.type]?.isUnary) {
+      const { type }: { type: keyof typeof Scanner.SYNTAX_TOKEN_ATTRIBUTES } =
+        this.currentToken;
+
+      x = new TAbstractSyntaxTree(
+        Scanner.SYNTAX_TOKEN_ATTRIBUTES[type].type,
+        undefined,
+        x,
+        undefined,
+      );
+
+      this.getToken();
+    }
+
     while (
       Scanner.SYNTAX_TOKEN_ATTRIBUTES[this.currentToken.type]?.isBinary &&
       (Scanner.SYNTAX_TOKEN_ATTRIBUTES[this.currentToken.type]?.precedence ??
@@ -231,20 +245,6 @@ export class Scanner {
       x.type = Scanner.SYNTAX_TOKEN_ATTRIBUTES[type].type;
       x.left = xt;
       x.right = clone(node);
-    }
-
-    while (Scanner.SYNTAX_TOKEN_ATTRIBUTES[this.currentToken.type]?.isUnary) {
-      const { type }: { type: keyof typeof Scanner.SYNTAX_TOKEN_ATTRIBUTES } =
-        this.currentToken;
-
-      x = new TAbstractSyntaxTree(
-        Scanner.SYNTAX_TOKEN_ATTRIBUTES[type].type,
-        undefined,
-        x,
-        undefined,
-      );
-
-      this.getToken();
     }
 
     return x;
