@@ -4,9 +4,22 @@ import { E_TOKEN_TYPE } from './types/common';
 import { error } from './error';
 import { E_ERROR_CODES } from './types/errors';
 import { E_EXECUTOR_FUNCTION_NAMES } from './types/executor';
-import { cloneDeep, groupBy, sortBy } from 'lodash';
+import { groupBy, sortBy } from 'lodash';
 
+/**
+ * Executor class.
+ * @class
+ * @classdesc Used to traverse the abstract syntax tree and execute the expression stored in it.
+ * @property {TAbstractSyntaxTree} syntaxTree Abstract syntax tree
+ */
 export class Executor {
+  /**
+   * Arithmetic operations map. Used to map arithmetic token types to operations.
+   * @type {Partial<Record<E_TOKEN_TYPE, (val1: number, val2: number) => number>}
+   * @private
+   * @static
+   * @readonly
+   */
   private static readonly ARITHMETIC_MAP: Partial<
     Record<E_TOKEN_TYPE, (val1: number, val2: number) => number>
   > = {
@@ -18,6 +31,13 @@ export class Executor {
     [E_TOKEN_TYPE.MODULO]: (val1, val2) => val1 % val2,
   };
 
+  /**
+   * Unary operations map. Used to map unary token types to operations.
+   * @type {Partial<Record<E_TOKEN_TYPE, (val: number) => number>}
+   * @private
+   * @static
+   * @readonly
+   */
   private static readonly UNARY_MAP: Partial<
     Record<E_TOKEN_TYPE, (val: number) => number>
   > = {
@@ -33,6 +53,13 @@ export class Executor {
     },
   };
 
+  /**
+   * Set operations map. Used to map set function names to operations.
+   * @type {Partial<Record<E_EXECUTOR_FUNCTION_NAMES, (...sets: Array<Array<number>>) => Array<number> | number>}
+   * @private
+   * @static
+   * @readonly
+   */
   private static readonly SET_MAP: Partial<
     Record<
       E_EXECUTOR_FUNCTION_NAMES,
@@ -172,6 +199,13 @@ export class Executor {
       Math.sqrt(set1.reduce((acc, value) => acc + value ** 2, 0) / set1.length),
   };
 
+  /**
+   * Functions map. Used to map function names to operations.
+   * @type {Partial<Record<E_EXECUTOR_FUNCTION_NAMES, (...args: Array<number>) => number>}
+   * @private
+   * @static
+   * @readonly
+   */
   private static readonly FUNCTIONS_MAP: Partial<
     Record<E_EXECUTOR_FUNCTION_NAMES, (...args: Array<number>) => number>
   > = {
@@ -299,10 +333,21 @@ export class Executor {
     },
   };
 
+  /**
+   * Executor constructor.
+   * @constructor
+   * @param {TAbstractSyntaxTree} syntaxTree Abstract syntax tree
+   */
   constructor(private readonly syntaxTree: TAbstractSyntaxTree) {
     //
   }
 
+  /**
+   * Parses a number literal from a tree node. Used to perform negate operation on a node.
+   * @private
+   * @param {TAbstractSyntaxTree} node Tree node
+   * @returns {number} Parsed number
+   */
   private parseNumberLiteral(node: TAbstractSyntaxTree): number {
     if (
       node.type !== E_TOKEN_TYPE.NUMBER_LITERAL &&
@@ -330,6 +375,11 @@ export class Executor {
     return parseFloat(node.value);
   }
 
+  /**
+   * Prepares the result of the expression. Used to validate the resulting tree and convert it to a string.
+   * @private
+   * @returns {string} Result string
+   */
   private prepareResult(): string {
     if (
       this.syntaxTree.right?.type !== E_TOKEN_TYPE.NUMBER_LITERAL &&
@@ -366,6 +416,11 @@ export class Executor {
     return '';
   }
 
+  /**
+   * Executes the expression stored in the abstract syntax tree using post-order traversal and existing operation maps.
+   * @returns {string | undefined} Result string
+   * @throws {@link ExecutorError} if the executor encounters an error (e.g. unknown function)
+   */
   public execute(): any {
     this.syntaxTree.traverseTree((node) => {
       if (Executor.ARITHMETIC_MAP[node.type]) {

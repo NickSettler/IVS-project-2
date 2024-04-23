@@ -9,7 +9,9 @@
     "test": "jest",
     "st_dev": "ts-node ./scripts/st_dev.ts",
     "st_dev:clean": "rm -rf src/lib/calc/**/*.js && rm -rf src/lib/calc/*.js",
-    "lint": "eslint \"{src,apps,libs,test}/**/*.{ts,tsx,js,jsx}\" --fix"
+    "lint": "eslint \"{src,apps,libs,test}/**/*.{ts,tsx,js,jsx}\" --fix",
+    "serve": "tsc && vite build && vite preview",
+    "docs:generate": "typedoc"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",
@@ -44,6 +46,7 @@
     "sass": "^1.75.0",
     "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
+    "typedoc": "^0.25.13",
     "typescript": "^5.4.5",
     "vite": "^5.2.10",
     "vite-plugin-eslint": "^1.8.1",

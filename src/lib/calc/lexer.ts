@@ -3,7 +3,20 @@ import { E_LEXER_STATE, TLexicalToken } from './types/lexer';
 import { error } from './error';
 import { E_ERROR_CODES } from './types/errors';
 
+/**
+ * Lexer class.
+ * @class
+ * @classdesc The class is used to tokenize the input string.
+ * @property {string} input Input string.
+ */
 export class Lexer {
+  /**
+   * Lexer operators map. Used to map string representation of operators to token types.
+   * @type {Record<string, E_TOKEN_TYPE>}
+   * @private
+   * @static
+   * @readonly
+   */
   private static readonly LEXER_OPERATORS_MAP: Record<string, E_TOKEN_TYPE> = {
     '+': E_TOKEN_TYPE.PLUS,
     '-': E_TOKEN_TYPE.MINUS,
@@ -14,6 +27,13 @@ export class Lexer {
     '!': E_TOKEN_TYPE.FACTORIAL,
   };
 
+  /**
+   * Lexer one symbol map. Used to map one symbol strings to token types.
+   * @type {Record<string, E_TOKEN_TYPE>}
+   * @private
+   * @static
+   * @readonly
+   */
   private static readonly LEXER_ONE_SYMBOL_MAP: Record<string, E_TOKEN_TYPE> = {
     '(': E_TOKEN_TYPE.OPEN_PAREN,
     ')': E_TOKEN_TYPE.CLOSE_PAREN,
@@ -22,14 +42,37 @@ export class Lexer {
     ',': E_TOKEN_TYPE.COMMA,
   };
 
+  /**
+   * Current index of the lexer.
+   * @private
+   */
   private _currentIndex = 0;
 
+  /**
+   * Current line of the lexer.
+   * @private
+   */
   private _currentLine = 0;
 
+  /**
+   * Current state of the lexer.
+   * @private
+   */
   private _state: E_LEXER_STATE = E_LEXER_STATE.START;
 
+  /**
+   * Lexer constructor.
+   * @constructor
+   * @param {string} input Input string.
+   */
   constructor(private readonly input: string) {}
 
+  /**
+   * Prepare return token. Adds line, column and width to the token to make it easier to find the error in the expression.
+   * @private
+   * @param {TLexicalToken} token Token to prepare.
+   * @returns {TLexicalToken} Prepared token.
+   */
   private prepareReturn(token: TLexicalToken): TLexicalToken {
     token.width = token.value.length;
     token.line = this._currentLine;
@@ -37,6 +80,11 @@ export class Lexer {
     return token;
   }
 
+  /**
+   * Get next token from the input string.
+   * @returns {TLexicalToken} Next token.
+   * @throws {@link LexicalError} if the lexer encounters an error (e.g. unexpected token).
+   */
   public getNextToken(): TLexicalToken {
     let currentChar = this.input[this._currentIndex];
     const token: TLexicalToken = {

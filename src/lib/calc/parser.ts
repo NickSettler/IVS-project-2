@@ -3,10 +3,23 @@ import { E_TOKEN_TYPE } from './types/common';
 import { TSyntaxTokenAttribute } from './types/parser';
 import { TAbstractSyntaxTree } from './ast';
 import { TLexicalToken } from './types/lexer';
-import { error, unexpectedSyntaxTokenError } from './error';
+import { error, SyntaxError } from './error';
 import { E_ERROR_CODES } from './types/errors';
 
+/**
+ * Scanner class.
+ * @class
+ * @classdesc The class is used to build an abstract syntax tree from the tokens.
+ * @property {() => TLexicalToken} getTokenFunc Function to get the next token from the {@link Lexer}.
+ */
 export class Scanner {
+  /**
+   * Lower token method. Used to create a token attribute with the lowest precedence.
+   * @private
+   * @static
+   * @param {E_TOKEN_TYPE} type Token type to use.
+   * @returns {TSyntaxTokenAttribute} Token attribute with the lowest precedence.
+   */
   private static lowerToken = (type: E_TOKEN_TYPE): TSyntaxTokenAttribute => ({
     ...(type && { type }),
     isRightAssociative: false,
@@ -15,6 +28,13 @@ export class Scanner {
     precedence: -1,
   });
 
+  /**
+   * Syntax token attributes. Used to store token attributes and parse expressions.
+   * @type {Record<E_TOKEN_TYPE, TSyntaxTokenAttribute>}
+   * @private
+   * @static
+   * @readonly
+   */
   private static readonly SYNTAX_TOKEN_ATTRIBUTES: Record<
     E_TOKEN_TYPE,
     TSyntaxTokenAttribute
@@ -100,18 +120,42 @@ export class Scanner {
     [E_TOKEN_TYPE.NODE]: Scanner.lowerToken(E_TOKEN_TYPE.NODE),
   };
 
+  /**
+   * Abstract syntax tree.
+   * @private
+   * @readonly
+   */
   private readonly _tree: TAbstractSyntaxTree;
 
+  /**
+   * Current token from the {@link Lexer}.
+   * @private
+   */
   private currentToken!: TLexicalToken;
 
+  /**
+   * Scanner constructor.
+   * @constructor
+   * @param {() => TLexicalToken} getTokenFunc Function to get the next token from the {@link Lexer}.
+   */
   constructor(private readonly getTokenFunc: () => TLexicalToken) {
     this._tree = new TAbstractSyntaxTree();
   }
 
+  /**
+   * Get the next token from the {@link Lexer}.
+   * @private
+   */
   private getToken() {
     this.currentToken = this.getTokenFunc();
   }
 
+  /**
+   * Expect token method. Used to check if the current token is the expected one.
+   * @param {E_TOKEN_TYPE} tokenType Expected token type.
+   * @private
+   * @throws {@link SyntaxError} if the current token is not the expected one.
+   */
   private expectToken(tokenType: E_TOKEN_TYPE) {
     if (this.currentToken.type !== tokenType) {
       error(
@@ -121,6 +165,11 @@ export class Scanner {
     }
   }
 
+  /**
+   * Process function arguments method. Used to parse function arguments.
+   * @private
+   * @returns {TAbstractSyntaxTree | undefined} Function arguments tree.
+   */
   private processFunctionArgs(): TAbstractSyntaxTree | undefined {
     if (this.currentToken.type === E_TOKEN_TYPE.CLOSE_PAREN) {
       this.getToken();
@@ -153,6 +202,13 @@ export class Scanner {
     return tree;
   }
 
+  /**
+   * Process expression method. Used to parse expressions.
+   * @private
+   * @param {number} precedence Precedence of the expression.
+   * @returns {TAbstractSyntaxTree} Expression tree.
+   * @throws {@link SyntaxError} if the parser encounters an error (e.g. unexpected token).
+   */
   private processExpression(precedence: number): TAbstractSyntaxTree {
     let x = new TAbstractSyntaxTree();
     let node = new TAbstractSyntaxTree();
@@ -250,6 +306,11 @@ export class Scanner {
     return x;
   }
 
+  /**
+   * Process parenthesized expression method. Used to parse parenthesized expressions.
+   * @private
+   * @returns {TAbstractSyntaxTree} Parenthesized expression tree.
+   */
   private parenthesizedExpression(): TAbstractSyntaxTree {
     this.expectToken(E_TOKEN_TYPE.OPEN_PAREN);
     this.getToken();
@@ -259,6 +320,11 @@ export class Scanner {
     return tree;
   }
 
+  /**
+   * Process set method. Used to parse set definitions.
+   * @private
+   * @returns {TAbstractSyntaxTree} Set tree.
+   */
   private processSet(): TAbstractSyntaxTree {
     const tree = new TAbstractSyntaxTree(E_TOKEN_TYPE.SET);
 
@@ -291,6 +357,11 @@ export class Scanner {
     return tree;
   }
 
+  /**
+   * Process query method. Used to parse the input string and build an abstract syntax tree.
+   * @returns {TAbstractSyntaxTree} Abstract syntax tree.
+   * @throws {@link SyntaxError} if the parser encounters an error (e.g. unexpected token).
+   */
   public processQuery(): TAbstractSyntaxTree {
     this.getToken();
 
@@ -309,7 +380,9 @@ export class Scanner {
       case E_TOKEN_TYPE.EOF:
         break;
       default:
-        unexpectedSyntaxTokenError(this.currentToken);
+        throw new SyntaxError(
+          `Unexpected token: "${this.currentToken.value}" [${this.currentToken.type}] at line ${this.currentToken.line}:${this.currentToken.column}`,
+        );
     }
 
     return tree;

@@ -23,7 +23,20 @@ const condSetLatexCloseParentheses = (
   type: E_TOKEN_TYPE | undefined,
 ): string => (type !== E_TOKEN_TYPE.SET ? ')' : '');
 
+/**
+ * Abstract Syntax Tree class
+ * @class
+ * @classdesc Represents an abstract syntax tree
+ */
 export class TAbstractSyntaxTree {
+  /**
+   * Map of token types to their LaTeX representation
+   *
+   * @private
+   * @static
+   * @readonly
+   * @type {Partial<Record<E_TOKEN_TYPE, string>>}
+   */
   private static readonly ML_MAP: Partial<Record<E_TOKEN_TYPE, string>> = {
     [E_TOKEN_TYPE.PLUS]: '+',
     [E_TOKEN_TYPE.MINUS]: '-',
@@ -32,20 +45,65 @@ export class TAbstractSyntaxTree {
     [E_TOKEN_TYPE.NEGATE]: '-',
   };
 
+  /**
+   * The type of the node
+   * @private
+   * @type {E_TOKEN_TYPE}
+   * @default E_TOKEN_TYPE.NODE
+   */
   private _type: E_TOKEN_TYPE = E_TOKEN_TYPE.NODE;
 
+  /**
+   * The value of the node
+   * @private
+   * @type {string | undefined}
+   * @default undefined
+   */
   private _value?: string;
 
+  /**
+   * The left child of the node
+   * @private
+   * @type {TAbstractSyntaxTree | undefined}
+   * @default undefined
+   */
   private _left?: TAbstractSyntaxTree;
 
+  /**
+   * The right child of the node
+   * @private
+   * @type {TAbstractSyntaxTree | undefined}
+   * @default undefined
+   */
   private _right?: TAbstractSyntaxTree;
 
+  /**
+   * Empty constructor. Initializes the tree with default values.
+   * @constructor
+   */
   constructor();
 
+  /**
+   * Constructor with type. Initializes the tree with the provided type.
+   * @param {E_TOKEN_TYPE} type The type of the node
+   * @constructor
+   */
   constructor(type: E_TOKEN_TYPE);
 
+  /**
+   * Constructor with type and value. Initializes the tree with the provided type and value.
+   * @param {E_TOKEN_TYPE} type The type of the node
+   * @param {string} value The value of the node
+   */
   constructor(type: E_TOKEN_TYPE, value: string);
 
+  /**
+   * Constructor with type, value, left and right children. Initializes the tree with the provided type, value, left and right children.
+   * @param {E_TOKEN_TYPE} type The type of the node
+   * @param {string} value The value of the node
+   * @param {TAbstractSyntaxTree} left The left child of the node
+   * @param {TAbstractSyntaxTree} right The right child of the node
+   */
   constructor(
     type: E_TOKEN_TYPE,
     value: string,
@@ -53,6 +111,13 @@ export class TAbstractSyntaxTree {
     right: TAbstractSyntaxTree,
   );
 
+  /**
+   * Constructor with optional parameters. Initializes the tree with the provided parameters.
+   * @param {E_TOKEN_TYPE} type The type of the node
+   * @param {string} value The value of the node
+   * @param {TAbstractSyntaxTree} left The left child of the node
+   * @param {TAbstractSyntaxTree} right The right child of the node
+   */
   constructor(
     type?: E_TOKEN_TYPE,
     value?: string,
@@ -60,6 +125,13 @@ export class TAbstractSyntaxTree {
     right?: TAbstractSyntaxTree,
   );
 
+  /**
+   * Constructor with optional parameters. Initializes the tree with the provided parameters.
+   * @param {E_TOKEN_TYPE} type The type of the node
+   * @param {string} value The value of the node
+   * @param {TAbstractSyntaxTree} left The left child of the node
+   * @param {TAbstractSyntaxTree} right The right child of the node
+   */
   constructor(
     type?: E_TOKEN_TYPE,
     value?: string,
@@ -72,6 +144,11 @@ export class TAbstractSyntaxTree {
     if (right) this._right = right;
   }
 
+  /**
+   * Traverse the tree in the specified order using the provided function
+   * @param {(node: TAbstractSyntaxTree) => void} func The function to be executed on each node
+   * @param {E_SYNTAX_TREE_TRAVERSE_ORDER} order The order in which the tree should be traversed
+   */
   public traverseTree(
     func: (node: TAbstractSyntaxTree) => void,
     order: E_SYNTAX_TREE_TRAVERSE_ORDER,
@@ -83,38 +160,74 @@ export class TAbstractSyntaxTree {
     if (order === E_SYNTAX_TREE_TRAVERSE_ORDER.POST_ORDER) func(this);
   }
 
+  /**
+   * Set the type of the node
+   * @param {E_TOKEN_TYPE} value The type of the node
+   */
   public set type(value: E_TOKEN_TYPE) {
     this._type = value;
   }
 
+  /**
+   * Get the type of the node
+   * @returns {E_TOKEN_TYPE} The type of the node
+   */
   public get type(): E_TOKEN_TYPE {
     return this._type;
   }
 
+  /**
+   * Set the value of the node
+   * @param {string | undefined} value The value of the node
+   */
   public set value(value: string | undefined) {
     this._value = value;
   }
 
+  /**
+   * Get the value of the node
+   * @returns {string | undefined} The value of the node
+   */
   public get value(): string | undefined {
     return this._value;
   }
 
+  /**
+   * Set the left child of the node
+   * @param {TAbstractSyntaxTree | undefined} value The left child of the node
+   */
   public set left(value: TAbstractSyntaxTree | undefined) {
     this._left = value;
   }
 
+  /**
+   * Get the left child of the node
+   * @returns {TAbstractSyntaxTree | undefined} The left child of the node
+   */
   public get left(): TAbstractSyntaxTree | undefined {
     return this._left;
   }
 
+  /**
+   * Set the right child of the node
+   * @param {TAbstractSyntaxTree | undefined} value The right child of the node
+   */
   public set right(value: TAbstractSyntaxTree | undefined) {
     this._right = value;
   }
 
+  /**
+   * Get the right child of the node
+   * @returns {TAbstractSyntaxTree | undefined} The right child of the node
+   */
   public get right(): TAbstractSyntaxTree | undefined {
     return this._right;
   }
 
+  /**
+   * Get the LaTeX string representation of the tree
+   * @returns {string} The LaTeX string representation of the tree
+   */
   public get latexString(): string {
     // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
     switch (this._type) {

@@ -1,48 +1,162 @@
+/**
+ * Executor function names enumeration
+ * @enum
+ */
 export enum E_EXECUTOR_FUNCTION_NAMES {
-  ABS = 'abs', // Absolute value
-  CEIL = 'ceil', // Ceiling value
-  FLOOR = 'floor', // Floor value
-  ROUND = 'round', // Round value
+  /**
+   * Absolute value
+   */
+  ABS = 'abs',
+  /**
+   * Round value to the highest integer
+   */
+  CEIL = 'ceil',
+  /**
+   * Round value to the lowest integer
+   */
+  FLOOR = 'floor',
+  /**
+   * Round value to the nearest integer
+   */
+  ROUND = 'round',
 
-  // Trigonometric functions
-  SIN = 'sin', // Sine
-  COS = 'cos', // Cosine
-  TAN = 'tan', // Tangent
-  COT = 'cot', // Cotangent
-  CTG = 'ctg', // Cotangent
-  ASIN = 'asin', // Arcsine
-  ACOS = 'acos', // Arccosine
-  ATAN = 'atan', // Arctangent
-  ACOT = 'acot', // Arccotangent
-  ACTG = 'actg', // Arccotangent
-  R2D = 'R2D', // Radians to degrees
-  D2R = 'D2R', // Degrees to radians
-  SQRT = 'sqrt', // Square root
-  SQRTN = 'sqrtn', // Nth root
+  /**
+   * Sine
+   */
+  SIN = 'sin',
+  /**
+   * Cosine
+   */
+  COS = 'cos',
+  /**
+   * Tangent
+   */
+  TAN = 'tan',
+  /**
+   * Cotangent
+   */
+  COT = 'cot',
+  /**
+   * Cotangent
+   */
+  CTG = 'ctg',
+  /**
+   * Arcsine
+   */
+  ASIN = 'asin',
+  /**
+   * Arccosine
+   */
+  ACOS = 'acos',
+  /**
+   * Arctangent
+   */
+  ATAN = 'atan',
+  /**
+   * Arccotangent
+   */
+  ACOT = 'acot',
+  /**
+   * Arccotangent
+   */
+  ACTG = 'actg',
+  /**
+   * Radians to degrees
+   */
+  R2D = 'R2D',
+  /**
+   * Degrees to radians
+   */
+  D2R = 'D2R',
+  /**
+   * Square root
+   */
+  SQRT = 'sqrt',
+  /**
+   * Root of power
+   */
+  SQRTN = 'sqrtn',
 
-  // Set functions
-  UNION = 'union', // Set union
-  INTERSECT = 'intersect', // Set intersection
-  DIFFERENCE = 'difference', // Set difference
-  DIFF = 'diff', // Alias for difference
+  /**
+   * Sets union
+   */
+  UNION = 'union',
+  /**
+   * Sets intersection
+   */
+  INTERSECT = 'intersect',
+  /**
+   * Sets difference
+   */
+  DIFFERENCE = 'difference',
+  /**
+   * Sets difference
+   */
+  DIFF = 'diff',
 
-  // Statistical functions
-  SUM = 'sum', // Sum of all elements
-  MIN = 'min', // Minimum value
-  MAX = 'max', // Maximum value
-  COUNT = 'count', // Number of elements
-  MEAN = 'mean', // Mean value
-  MEDIAN = 'median', // Median value
-  MODE = 'mode', // Mode value
-  RANGE = 'range', // Range of values
-  VARIANCE = 'variance', // Variance
-  VAR = 'var', // Variance
-  STDDEV = 'stddev', // Standard deviation
-  MAD = 'MAD', // Mean absolute deviation
-  RMS = 'RMS', // Root mean square
+  /**
+   * Sets sum
+   */
+  SUM = 'sum',
+  /**
+   * Sets minimum value
+   */
+  MIN = 'min',
+  /**
+   * Sets maximum value
+   */
+  MAX = 'max',
+  /**
+   * Sets elements count
+   */
+  COUNT = 'count',
+  /**
+   * Sets mean value
+   */
+  MEAN = 'mean',
+  /**
+   * Sets median value
+   */
+  MEDIAN = 'median',
+  /**
+   * Sets mode value
+   */
+  MODE = 'mode',
+  /**
+   * Sets range of values
+   */
+  RANGE = 'range',
+  /**
+   * Sets variance
+   */
+  VARIANCE = 'variance',
+  /**
+   * Sets variance
+   */
+  VAR = 'var',
+  /**
+   * Sets standard deviation
+   */
+  STDDEV = 'stddev',
+  /**
+   * Sets mean absolute deviation
+   */
+  MAD = 'MAD',
+  /**
+   * Sets root mean square
+   */
+  RMS = 'RMS',
 
-  // Random functions
-  RAND = 'rand', // Random number between 0 and 1
-  RANDINT = 'randint', // Random integer between a and b
+  /**
+   * Random number between 0 and 1
+   */
+  RAND = 'rand',
+  /**
+   * Random integer between a and b
+   */
+  RANDINT = 'randint',
+  /**
+   * Random number from the normal distribution
+   */
   RANDN = 'randn', // Random number from the normal distribution
 }
