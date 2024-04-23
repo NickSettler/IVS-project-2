@@ -10,7 +10,7 @@ const processedInput = input
   .replace(/,{2,}/g, ',')
   .replace(/,$/, '');
 
-const calc = (expression: string): number => {
+const calc = (expression: string): string => {
   const lexer = new Lexer(expression);
   const tree = new Scanner(lexer.getNextToken.bind(lexer)).processQuery();
   const executor = new Executor(tree);

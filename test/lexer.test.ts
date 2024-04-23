@@ -4,7 +4,7 @@ import {
   isExpressionValid,
   Lexer,
   TLexicalToken,
-} from '../src/lib/calc';
+} from '../src/renderer/src/lib/calc';
 
 describe('Lexer tests', () => {
   const check = (input: string, expected: Array<Partial<TLexicalToken>>) => {

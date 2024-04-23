@@ -5,7 +5,7 @@ import {
   Executor,
   Lexer,
   Scanner,
-} from '../src/lib/calc';
+} from '../src/renderer/src/lib/calc';
 import { map, pick } from 'lodash';
 
 describe('Executor tests', () => {

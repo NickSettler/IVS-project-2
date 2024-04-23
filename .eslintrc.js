@@ -10,13 +10,15 @@ module.exports = {
     'prettier',
     'plugin:prettier/recommended',
     'plugin:import/recommended',
+    '@electron-toolkit/eslint-config-ts/recommended',
+    '@electron-toolkit/eslint-config-prettier'
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
     },
-    project: 'tsconfig.json',
+    project: 'tsconfig.web.json',
     tsconfigRootDir: __dirname,
     ecmaVersion: 'latest',
     sourceType: 'module',
