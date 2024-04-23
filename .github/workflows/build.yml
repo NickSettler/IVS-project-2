@@ -15,16 +15,14 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v1
 
-      - name: Install Node.js, NPM and Yarn
-        uses: actions/setup-node@v1
-        with:
-          node-version: 20
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v1
 
       - name: Install dependencies
-        run: yarn install
+        run: bun install
 
       - name: Build executable
-        run: yarn std_dev:build
+        run: bun run std_dev:build
 
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
