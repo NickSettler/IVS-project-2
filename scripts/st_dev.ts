@@ -1,4 +1,4 @@
-import { Lexer, Scanner, Executor } from '../src/lib/calc';
+import { Lexer, Scanner, Executor } from '../src/renderer/src/lib/calc';
 import { readFileSync } from 'fs';
 
 const STDIN_FILENO = 0;
@@ -10,7 +10,7 @@ const processedInput = input
   .replace(/,{2,}/g, ',')
   .replace(/,$/, '');
 
-const calc = (expression: string): number => {
+const calc = (expression: string): string => {
   const lexer = new Lexer(expression);
   const tree = new Scanner(lexer.getNextToken.bind(lexer)).processQuery();
   const executor = new Executor(tree);

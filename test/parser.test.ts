@@ -5,7 +5,7 @@ import {
   Scanner,
   SyntaxError,
   TAbstractSyntaxTree,
-} from '../src/lib/calc';
+} from '../src/renderer/src/lib/calc';
 import { map, pick } from 'lodash';
 
 export type TScannerTestToken = {
@@ -17,7 +17,7 @@ describe('Parser tests', () => {
   const check = (
     input: string,
     expected: Array<Partial<TScannerTestToken>>,
-  ) => {
+  ): void => {
     const lexer = new Lexer(input);
     const scanner = new Scanner(lexer.getNextToken.bind(lexer));
 

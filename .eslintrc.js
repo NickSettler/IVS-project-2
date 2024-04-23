@@ -4,19 +4,28 @@ module.exports = {
     es2021: true,
     jest: true,
   },
+  ignorePatterns: [
+    'electron.vite.config.ts',
+    'typedoc.config.cjs',
+    'src/preload/*.ts',
+    'src/main/*.ts',
+    '*.js',
+  ],
   extends: [
     'plugin:react/recommended',
     'plugin:@typescript-eslint/recommended',
     'prettier',
     'plugin:prettier/recommended',
     'plugin:import/recommended',
+    '@electron-toolkit/eslint-config-ts/recommended',
+    '@electron-toolkit/eslint-config-prettier'
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
     },
-    project: 'tsconfig.json',
+    project: 'tsconfig.web.json',
     tsconfigRootDir: __dirname,
     ecmaVersion: 'latest',
     sourceType: 'module',
