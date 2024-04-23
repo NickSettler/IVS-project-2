@@ -1,6 +1,6 @@
 {
   "name": "ivs-fit-vut-calculator",
-  "version": "3.3.0",
+  "version": "3.4.0",
   "description": "Calculator project made in Typescript with React. Supports basic, trigonometry, sets, statistics and random functions. Made using formal languages algorithms",
   "main": "./out/main/index.js",
   "author": "NickSettler<moiseevnikita14@gmail.com>",
