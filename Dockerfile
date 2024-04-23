@@ -17,4 +17,4 @@ RUN yarn build
 FROM nginx:1.18-alpine
 
 COPY docker/nginx.conf /etc/nginx/nginx.conf
-COPY --from=build /out/renderer /frontend/build
+COPY --from=build /build/out/renderer /frontend/build
