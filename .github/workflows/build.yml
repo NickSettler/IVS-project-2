@@ -30,7 +30,7 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: std-dev-exec
-          asset_name: std-dev-${{ matrix.os }}-${{ github.ref }}
+          asset_name: std-dev-${{ matrix.os }}
           tag: ${{ github.ref }}
           overwrite: true
 
