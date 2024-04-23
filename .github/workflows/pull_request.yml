@@ -48,6 +48,6 @@ jobs:
         if: github.event.pull_request.merged == true
         uses: actions/upload-artifact@v3
         with:
-          name: build
+          name: out
           path: |
-            build
+            out
