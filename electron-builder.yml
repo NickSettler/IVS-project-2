@@ -19,6 +19,7 @@ nsis:
   uninstallDisplayName: ${productName}
   createDesktopShortcut: always
 mac:
+  category: public.app-category.utilities
   entitlementsInherit: build/entitlements.mac.plist
   extendInfo:
     - NSCameraUsageDescription: Application requests access to the device's camera.
@@ -30,13 +31,9 @@ dmg:
   artifactName: ${name}-${version}.${ext}
 linux:
   target:
-    - AppImage
-    - snap
     - deb
-  maintainer: electronjs.org
+  maintainer: NickSettler
   category: Utility
-appImage:
-  artifactName: ${name}-${version}.${ext}
 npmRebuild: false
 publish:
   provider: github
