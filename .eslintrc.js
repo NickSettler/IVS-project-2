@@ -4,6 +4,13 @@ module.exports = {
     es2021: true,
     jest: true,
   },
+  ignorePatterns: [
+    'electron.vite.config.ts',
+    'typedoc.config.cjs',
+    'src/preload/*.ts',
+    'src/main/*.ts',
+    '*.js',
+  ],
   extends: [
     'plugin:react/recommended',
     'plugin:@typescript-eslint/recommended',

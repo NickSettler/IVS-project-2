@@ -1,6 +1,6 @@
 {
-  "version": "2.0.0",
   "name": "ivs-fit-vut-calculator",
+  "version": "2.2.0",
   "description": "Calculator project made in Typescript with React. Supports basic, trigonometry, sets, statistics and random functions. Made using formal languages algorithms",
   "main": "./out/main/index.js",
   "author": "NickSettler<moiseevnikita14@gmail.com>",
@@ -19,7 +19,9 @@
     "build:win": "npm run build && electron-builder --win",
     "build:mac": "electron-vite build && electron-builder --mac",
     "build:linux": "electron-vite build && electron-builder --linux",
-    "test": "jest"
+    "st_dev": "ts-node --project tsconfig.web.json ./scripts/st_dev.ts",
+    "test": "jest",
+    "docs:generate": "typedoc"
   },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.0",

@@ -370,6 +370,7 @@ export class Scanner {
         break;
       default:
         throw new SyntaxError(
+          // eslint-disable-next-line max-len
           `Unexpected token: "${this.currentToken.value}" [${this.currentToken.type}] at line ${this.currentToken.line}:${this.currentToken.column}`,
         );
     }

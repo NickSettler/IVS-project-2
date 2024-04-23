@@ -17,7 +17,7 @@ describe('Parser tests', () => {
   const check = (
     input: string,
     expected: Array<Partial<TScannerTestToken>>,
-  ) => {
+  ): void => {
     const lexer = new Lexer(input);
     const scanner = new Scanner(lexer.getNextToken.bind(lexer));
 

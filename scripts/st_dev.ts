@@ -1,4 +1,4 @@
-import { Lexer, Scanner, Executor } from '../src/lib/calc';
+import { Lexer, Scanner, Executor } from '../src/renderer/src/lib/calc';
 import { readFileSync } from 'fs';
 
 const STDIN_FILENO = 0;

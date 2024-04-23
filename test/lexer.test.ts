@@ -7,7 +7,10 @@ import {
 } from '../src/renderer/src/lib/calc';
 
 describe('Lexer tests', () => {
-  const check = (input: string, expected: Array<Partial<TLexicalToken>>) => {
+  const check = (
+    input: string,
+    expected: Array<Partial<TLexicalToken>>,
+  ): void => {
     const lexicalAnalyser = new Lexer(input);
     let token: TLexicalToken = lexicalAnalyser.getNextToken();
     let i = 0;
