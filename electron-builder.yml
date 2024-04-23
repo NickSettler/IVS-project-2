@@ -1,5 +1,5 @@
-appId: com.electron.app
-productName: vite-electron-react
+appId: ivs.fit.vut.calculator
+productName: ivs-fit-vut-calculator
 directories:
   buildResources: build
 files:
@@ -12,7 +12,7 @@ files:
 asarUnpack:
   - resources/**
 win:
-  executableName: vite-electron-react
+  executableName: ivs-fit-vut-calculator
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
