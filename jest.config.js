@@ -3,9 +3,9 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   verbose: true,
-  globals: {
-    'ts-jest': {
-      tsconfig: 'tsconfig.web.json'
-    }
-  }
+  transform: {
+    '^.+\\.tsx?$': ['ts-jest', {
+      tsconfig: 'tsconfig.web.json',
+    }]
+  },
 };
