@@ -5,9 +5,9 @@
     "src/renderer/src/**/*",
     "src/renderer/src/**/*.tsx",
     "src/preload/*.d.ts",
+    "src/stddev",
     "test",
-    "scripts",
-    "std-dev"
+    "scripts"
   ],
   "compilerOptions": {
     "composite": true,

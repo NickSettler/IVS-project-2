@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { Lexer, Scanner, Executor } from '../src/renderer/src/lib/calc/index';
+import { Lexer, Scanner, Executor } from '../renderer/src/lib/calc';
 import { readFileSync } from 'node:fs';
 
 const STDIN_FILENO = 0;

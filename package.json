@@ -19,7 +19,7 @@
     "build:win": "npm run build && electron-builder --win",
     "build:mac": "electron-vite build && electron-builder --mac",
     "build:linux": "electron-vite build && electron-builder --linux",
-    "std_dev:build": "bun build ./std-dev/std-dev.ts --compile --minify --outfile std-dev-exec",
+    "std_dev:build": "bun build src/stddev/std-dev.ts --compile --minify --outfile stddev",
     "test": "jest",
     "docs:generate": "typedoc"
   },

@@ -29,8 +29,8 @@ jobs:
         if: ${{ startsWith(github.ref, 'refs/tags/v') }}
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: std-dev-exec
-          asset_name: std-dev-${{ matrix.os }}
+          file: stddev
+          asset_name: stddev-${{ matrix.os }}
           tag: ${{ github.ref }}
           overwrite: true
 
@@ -38,8 +38,8 @@ jobs:
         uses: actions/upload-artifact@v4
         if: ${{ ! startsWith(github.ref, 'refs/tags/v') }}
         with:
-          name: std-dev-${{ matrix.os }}-${{ github.sha }}
-          path: std-dev-exec
+          name: stddev-${{ matrix.os }}-${{ github.sha }}
+          path: stddev
 
   build-desktop:
     name: Build desktop app
