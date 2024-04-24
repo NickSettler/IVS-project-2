@@ -1,0 +1,11 @@
+According to the profiler output it seems, that most of the execution time is spent for <anonymous> functions.
+These functions in most cases are anonymous functions passed for tree traversal during Executor class actions.
+This means, that for optimisation of the code, it is necessary to refactor functions, which are using
+tree traversal post order algorithm, to traverse the tree and compute the result in Executor class.
+
+The next step is to refactor getNextToken method of the Lexer class which tokenizes the input string.
+
+The current version of the code uses about 30% of the execution time for the mentioned processes.
+The total execution time is about 335ms.
+The refactor process definitely cannot reduce this execution time by 30%, but probably, the half of the value is achievable.
+This means that the execution time can be reduced to about 285ms.
