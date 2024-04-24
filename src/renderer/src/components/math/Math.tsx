@@ -1,5 +1,13 @@
 import { JSX, useLayoutEffect, useRef, useState } from 'react';
 
+/**
+ * Math SVG component. Renders math expression as SVG using {@link https://www.mathjax.org/}.
+ * @param {{
+ *   tex: string;
+ *   isDisplay?: boolean;
+ * }} props Math SVG props
+ * @constructor
+ */
 export const MathSVG = ({
   tex,
   isDisplay = false,

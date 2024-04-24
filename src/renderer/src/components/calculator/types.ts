@@ -1,70 +1,233 @@
 import { ButtonProps } from '@mui/material';
 
+/**
+ * Calculator buttons
+ * @enum
+ */
 export enum E_CALCULATOR_BUTTONS {
+  /**
+   * Number 1 button
+   */
   NUMBER_1 = '1',
+  /**
+   * Number 2 button
+   */
   NUMBER_2 = '2',
+  /**
+   * Number 3 button
+   */
   NUMBER_3 = '3',
+  /**
+   * Number 4 button
+   */
   NUMBER_4 = '4',
+  /**
+   * Number 5 button
+   */
   NUMBER_5 = '5',
+  /**
+   * Number 6 button
+   */
   NUMBER_6 = '6',
+  /**
+   * Number 7 button
+   */
   NUMBER_7 = '7',
+  /**
+   * Number 8 button
+   */
   NUMBER_8 = '8',
+  /**
+   * Number 9 button
+   */
   NUMBER_9 = '9',
+  /**
+   * Number 0 button
+   */
   NUMBER_0 = '0',
 
+  /**
+   * Decimal point button
+   */
   DECIMAL = '.',
 
+  /**
+   * Power of ten button
+   */
   POWER_OF_TEN = '*10^{n}',
 
+  /**
+   * Addition operation button
+   */
   ADD = '+',
+  /**
+   * Subtraction operation button
+   */
   SUBTRACT = '-',
+  /**
+   * Multiplication operation button
+   */
   MULTIPLY = '*',
+  /**
+   * Division operation button
+   */
   DIVIDE = '/',
 
+  /**
+   * Open parenthesis button
+   */
   OPEN_PAREN = '(',
+  /**
+   * Close parenthesis button
+   */
   CLOSE_PAREN = ')',
 
+  /**
+   * Delete character button
+   */
   DELETE = 'DEL',
+  /**
+   * Clear input button
+   */
   CLEAR = 'AC',
 
+  /**
+   * Convert radians to degrees function button
+   */
   R2D = 'R2D()',
+  /**
+   * Convert degrees to radians function button
+   */
   D2R = 'D2R()',
+  /**
+   * Sine function button
+   */
   SIN = 'sin()',
+  /**
+   * Cosine function button
+   */
   COS = 'cos()',
+  /**
+   * Tangent function button
+   */
   TAN = 'tan()',
+  /**
+   * Cotangent function button
+   */
   CTG = 'ctg()',
+  /**
+   * Arcsine function button
+   */
   ASIN = 'asin()',
+  /**
+   * Arccosine function button
+   */
   ACOS = 'acos()',
+  /**
+   * Arctangent function button
+   */
   ATAN = 'atan()',
+  /**
+   * Arccotangent function button
+   */
   ACTG = 'actg()',
 
+  /**
+   * Empty set button
+   */
   EMPTY_SET = '\\emptyset',
+  /**
+   * Comma button
+   */
   COMMA = ',',
 
+  /**
+   * Union set operation button
+   */
   UNION = 'union()',
+  /**
+   * Intersection set operation button
+   */
   INTERSECT = 'intersect()',
+  /**
+   * Difference set operation button
+   */
   DIFFERENCE = 'difference()',
 
+  /**
+   * Set sum function button
+   */
   SUM = 'sum()',
+  /**
+   * Set minimum function button
+   */
   MIN = 'min()',
+  /**
+   * Set maximum function button
+   */
   MAX = 'max()',
+  /**
+   * Set count function button
+   */
   COUNT = 'count()',
+  /**
+   * Set mean function button
+   */
   MEAN = 'mean()',
+  /**
+   * Set median function button
+   */
   MEDIAN = 'median()',
+  /**
+   * Set mode function button
+   */
   MODE = 'mode()',
+  /**
+   * Set range function button
+   */
   RANGE = 'range()',
+  /**
+   * Set variance function button
+   */
   VAR = 'var()',
+  /**
+   * Set standard deviation function button
+   */
   STDDEV = 'stddev()',
+  /**
+   * Set mean absolute deviation function button
+   */
   MAD = 'MAD()',
+  /**
+   * Set root-mean-square function button
+   */
   RMS = 'RMS()',
 
+  /**
+   * Random number function button
+   */
   RAND = 'rand()',
+  /**
+   * Random integer function button
+   */
   RANDINT = 'randint()',
+  /**
+   * Random normal distribution function button
+   */
   RANDN = 'randn()',
 }
 
+/**
+ * Calculator button mode
+ */
 export enum E_CALCULATOR_BUTTON_MODE {
+  /**
+   * Append mode. This mode appends the button value to the input string.
+   */
   APPEND = 'APPEND',
+  /**
+   * Action mode. This mode performs an action on the input string.
+   */
   ACTION = 'ACTION',
 }
 
@@ -80,6 +243,9 @@ const bracketFunctionAction = (
   ];
 };
 
+/**
+ * Calculator button actions. These actions are performed on the input string when a button is clicked.
+ */
 export const CalculatorButtonActions: Partial<
   Record<
     E_CALCULATOR_BUTTONS,
@@ -146,12 +312,27 @@ export const CalculatorButtonActions: Partial<
   ),
 };
 
+/**
+ * Calculator button type
+ */
 export type TCalculatorButton = {
+  /**
+   * Button value {@link E_CALCULATOR_BUTTONS}
+   */
   value: E_CALCULATOR_BUTTONS;
+  /**
+   * Button mode {@link E_CALCULATOR_BUTTON_MODE}
+   */
   mode?: E_CALCULATOR_BUTTON_MODE;
+  /**
+   * Button color {@link ButtonProps}
+   */
   color?: ButtonProps['color'];
 };
 
+/**
+ * Calculator basic buttons
+ */
 export const CalculatorBasicButtons: Array<TCalculatorButton> = [
   { value: E_CALCULATOR_BUTTONS.NUMBER_7 },
   { value: E_CALCULATOR_BUTTONS.NUMBER_8 },
@@ -186,6 +367,9 @@ export const CalculatorBasicButtons: Array<TCalculatorButton> = [
   { value: E_CALCULATOR_BUTTONS.CLOSE_PAREN },
 ];
 
+/**
+ * Calculator trigonometric buttons
+ */
 export const CalculatorTrigonometricButtons: Array<Array<TCalculatorButton>> = [
   [
     {
@@ -235,6 +419,9 @@ export const CalculatorTrigonometricButtons: Array<Array<TCalculatorButton>> = [
   ],
 ];
 
+/**
+ * Calculator set buttons
+ */
 export const CalculatorSetButtons: Array<Array<TCalculatorButton>> = [
   [
     {
@@ -261,6 +448,9 @@ export const CalculatorSetButtons: Array<Array<TCalculatorButton>> = [
   ],
 ];
 
+/**
+ * Calculator statistical buttons
+ */
 export const CalculatorStatisticalButtons: Array<Array<TCalculatorButton>> = [
   [
     {
@@ -318,6 +508,9 @@ export const CalculatorStatisticalButtons: Array<Array<TCalculatorButton>> = [
   ],
 ];
 
+/**
+ * Calculator random buttons
+ */
 export const CalculatorRandomButtons: Array<Array<TCalculatorButton>> = [
   [
     {

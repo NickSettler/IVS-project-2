@@ -9,10 +9,8 @@ import {
   IconButton,
 } from '@mui/material';
 import { Toaster } from 'react-hot-toast';
-import { Calculator } from './components/calculator/Calculator.tsx';
-import { Info } from './components/info/Info.tsx';
+import { Calculator, Help, AppDrawer } from './components';
 import { Settings } from '@mui/icons-material';
-import { AppDrawer } from './components/common/AppDrawer.tsx';
 
 const Wrapper = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -93,7 +91,7 @@ const App = (): JSX.Element => {
         <Toolbar sx={{ mb: 1 }} />
         <ContentContainer>
           <Calculator />
-          <Info />
+          <Help />
         </ContentContainer>
       </MainContainer>
       <Toaster position='bottom-right' reverseOrder={false} />

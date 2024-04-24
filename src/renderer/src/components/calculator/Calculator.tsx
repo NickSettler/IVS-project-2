@@ -28,7 +28,7 @@ import {
   TAbstractSyntaxTree,
 } from '../../lib/calc';
 import { cloneDeep, isEmpty, isNull } from 'lodash';
-import { MathSVG } from '../math/Math.tsx';
+import { MathSVG } from '../math';
 import { CalculatorButton } from './CalculatorButton.tsx';
 import {
   CalculatorBasicButtons,
@@ -43,7 +43,7 @@ import {
 } from './types.ts';
 import { ArrowForward, ContentCopy, ContentPaste } from '@mui/icons-material';
 import { useLocalStorage } from 'usehooks-ts';
-import { E_LOCAL_STORAGE_KEYS } from '../../utils/local-storage';
+import { E_LOCAL_STORAGE_KEYS } from '../../utils';
 import toast from 'react-hot-toast';
 
 const LatexExpressionBox = styled(Box)(({ theme }) => ({
@@ -109,6 +109,10 @@ const OperationsContainer = styled(Box)(({ theme }) => ({
   },
 }));
 
+/**
+ * Tabs of the calculator additional operations
+ * @enum
+ */
 export enum E_CALCULATOR_OPERATIONS_TABS {
   TRIGONOMETRY = 0,
   SETS = 1,
@@ -132,6 +136,10 @@ const CustomTabPanel = (props: TTabPanelProps): JSX.Element => {
   );
 };
 
+/**
+ * Calculator component. Renders a calculator with expressions field and basic and additional operations.
+ * @constructor
+ */
 export const Calculator = (): JSX.Element => {
   const inputRef = useRef<HTMLInputElement>(null);
 

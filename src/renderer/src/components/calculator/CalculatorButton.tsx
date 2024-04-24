@@ -3,12 +3,35 @@ import { Button, ButtonProps, styled } from '@mui/material';
 import { MathSVG } from '../math/Math.tsx';
 import { E_CALCULATOR_BUTTON_MODE, E_CALCULATOR_BUTTONS } from './types.ts';
 
+/**
+ * Calculator button props
+ */
 export type TCalculatorButtonProps = {
+  /**
+   * Button value {@link E_CALCULATOR_BUTTONS}
+   */
   value: E_CALCULATOR_BUTTONS;
+  /**
+   * Button mode {@link E_CALCULATOR_BUTTON_MODE}
+   */
   mode?: E_CALCULATOR_BUTTON_MODE;
+  /**
+   * Button size
+   */
   size?: 'medium' | 'small';
+  /**
+   * Button color {@link ButtonProps}
+   */
   color?: ButtonProps['color'];
+  /**
+   * Is square button
+   */
   isSquare?: boolean;
+  /**
+   * On click button handler
+   * @param {E_CALCULATOR_BUTTONS} value Button value
+   * @param {E_CALCULATOR_BUTTON_MODE} mode Button mode
+   */
   onClick(value: E_CALCULATOR_BUTTONS, mode: E_CALCULATOR_BUTTON_MODE): void;
 };
 
@@ -38,6 +61,12 @@ const CalculatorButtonStyled = styled(Button, {
   },
 }));
 
+/**
+ * Calculator button component. Renders a button with a math symbol.
+ *
+ * @param {TCalculatorButtonProps} props Button props
+ * @constructor
+ */
 export const CalculatorButton = ({
   value,
   onClick,
@@ -63,7 +92,6 @@ export const CalculatorButton = ({
       isSquare={isSquare}
     >
       <MathSVG tex={value} />
-      {/* {value}*/}
     </CalculatorButtonStyled>
   );
 };

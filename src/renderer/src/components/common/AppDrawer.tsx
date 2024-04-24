@@ -15,14 +15,29 @@ import {
   useTheme,
 } from '@mui/material';
 import { useLocalStorage } from 'usehooks-ts';
-import { E_LOCAL_STORAGE_KEYS } from '../../utils/local-storage';
+import { E_LOCAL_STORAGE_KEYS } from '../../utils';
 import { Close } from '@mui/icons-material';
 
+/**
+ * App drawer props
+ */
 export type TAppDrawerProps = {
+  /**
+   * Is drawer open
+   */
   isOpen: boolean;
+  /**
+   * On close drawer handler
+   */
   onClose(): void;
 };
 
+/**
+ * App drawer. Renders settings drawer
+ *
+ * @param {TAppDrawerProps} props App drawer props
+ * @constructor
+ */
 export const AppDrawer = ({
   isOpen,
   onClose,

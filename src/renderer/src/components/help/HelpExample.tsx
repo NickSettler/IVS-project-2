@@ -10,11 +10,25 @@ const ExampleBox = styled(Box)(({ theme }) => ({
   columnGap: theme.spacing(1),
 }));
 
+/**
+ * Help example props
+ */
 export type THelpExampleProps = {
+  /**
+   * Example expression
+   */
   example: string;
+  /**
+   * Result of the expression
+   */
   result: string;
 };
 
+/**
+ * Help example component. Renders example expression with result
+ * @param {THelpExampleProps} props Help example props
+ * @constructor
+ */
 export const HelpExample = ({
   example,
   result,

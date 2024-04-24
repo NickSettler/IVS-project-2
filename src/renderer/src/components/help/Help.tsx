@@ -346,6 +346,10 @@ const HelpAccordions: Record<string, Array<THelpTableRowProps>> = {
   ],
 };
 
+/**
+ * Help component. Renders a help box with accordion items.
+ * @constructor
+ */
 export const Help = (): JSX.Element => {
   return (
     <HelpBox>
