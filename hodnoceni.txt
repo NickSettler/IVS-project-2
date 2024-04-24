@@ -1,3 +1,3 @@
-xmoise01 X (skutečně řešená část projektu)
-xmaroc00 X (skutečně řešená část projektu)
-xpasyn00 X (skutečně řešená část projektu)
+xmoise01 200 (knihovna s mat. operacemi, zakladni design aplikace, uzivatelska prirucka)
+xpasyn00 66 (testovani)
+xmaroc00 50 (vylepseni UI aplikace)
