@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 import { Lexer, Scanner, Executor } from '../renderer/src/lib/calc';
 import { readFileSync } from 'node:fs';
 

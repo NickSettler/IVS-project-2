@@ -1,5 +1,5 @@
-import { Lexer } from './lexer.ts';
-import { Scanner } from './parser.ts';
+import { Lexer } from './lexer';
+import { Scanner } from './parser';
 
 /**
  * Check if the expression is valid
