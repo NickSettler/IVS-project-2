@@ -1,0 +1,30 @@
+The project development was not possible to separate to sprints as we planned,
+because two members of the team (xmaroc00, xpasyn00) were not able to work on the project for a long time.
+
+So most of the work was done by the leader (xmoise01) of the team, who was able to work on the project.
+Some tasks assigned to the other members were not done, so the leader had to do them as well.
+
+The initial tasks assignment was done more or less equally,
+but the final result is that the leader did most of the work.
+
+However, some tasks, assigned to the other members, were done by them.
+Their code changes were reviewed by the leader and merged into the project during the code review process.
+Some code changes were required in order to merge the changes into the project and were done by the project members.
+
+The communication process via Telegram app was working well and as planned.
+Team members were telling, if they will be able or not to attend weekly meetings.
+The short summary of the meeting and the plan for the next week was sent to the team members after the meeting in chat.
+
+YouTrack application was used for the project management during the whole development process.
+The application was used for the tasks assignment, tracking the progress of the tasks and the project.
+The experience with the application was good, and it was easy to use.
+
+GitHub was used for the source code management, the code review process and CI/CD workflows.
+The experience with GitHub was good, and it was easy to use.
+
+Summary: 3/4
+* Some tasks were not done as planned by other members, but were later done by the leader (not expected to happen initially)
+* The communication process was working well and as expected (expected to happen initially)
+* The project management was done using YouTrack and satisfied our needs (expected to happen initially)
+* The source code management was done using GitHub and satisfied our needs (expected to happen initially)
+
